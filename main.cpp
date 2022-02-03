@@ -15,7 +15,6 @@ int main(int argc, char const *argv[])
 {
     Log.setFile("Log.log", true);
     Log.setTarget(Target::STDOUT);
-    Log.useFastTime();
     
     timerTest();
     Log.LogInfo(profiler.getTimingsAsString());
