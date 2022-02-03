@@ -79,8 +79,6 @@ public:
     bool fileEnabled = true;
     bool deletePrevLog = true;
 
-    bool fastTimeEnabled = false;
-
     ~Logger()
     {
         this->LoggingStream.close();
@@ -249,7 +247,7 @@ public:
         if (this->timestampEnabled)
         {
             std::time_t time = system_clock::to_time_t(system_clock::now());
-            if (!this->fastTimeEnabled || this->lastTime + 1 < time)
+            if (this->lastTime + 1 < time)
             {
                 this->lastTime = time;
                 struct tm *timeStruct = std::localtime(&time);
@@ -345,19 +343,6 @@ public:
 #pragma endregion Logs
 
 #pragma region boolSets
-    /* Time will be calculated on each Log message.
-     */
-    void dontUseFastTime()
-    {
-        this->fastTimeEnabled = false;
-    }
-
-    /* Time might be up to a second behind the real time.
-     */
-    void useFastTime()
-    {
-        this->fastTimeEnabled = true;
-    }
 
     /* Date and time will no longer be printed with each Logger message.
      */
