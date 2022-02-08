@@ -18,8 +18,8 @@ int main(int argc, char const *argv[])
     
     timerTest();
     Log.LogInfo(profiler.getTimingsAsString());
-    mypng::read_png_file((char*)"test.png");
-    mypng::process_file();
-    mypng::write_png_file((char*)"test2.png");
+    //mypng::read_png_file((char*)"test.png");
+    //mypng::process_file();
+    //mypng::write_png_file((char*)"test2.png");
     return 0;
 }
