@@ -1,23 +1,5 @@
+#include "libpng.hpp"
 
-/*
- * Copyright 2002-2010 Guillaume Cottenceau.
- *
- * This software may be freely redistributed under the terms
- * of the X11 license.
- *
- */
-
-#include <unistd.h>
-#include <stdlib.h>
-#include <stdio.h>
-#include <string.h>
-#include <stdarg.h>
-
-#define PNG_DEBUG 3
-#include <libpng16/png.h>
-
-namespace mypng
-{
     void abort_(const char *s, ...)
     {
         va_list args;
@@ -29,13 +11,13 @@ namespace mypng
     }
 
     int x, y;
-
     int width, height;
+
     png_byte color_type;
     png_byte bit_depth;
-
     png_structp png_ptr;
     png_infop info_ptr;
+
     int number_of_passes;
     png_bytep *row_pointers;
 
@@ -172,21 +154,96 @@ namespace mypng
         }
     }
 
-    //my part
+//my part
 
-    struct pngData
+pngData read_ARGB_png_file(char *file_name)
+{
+    pngData result;
+    char cHeader[8]; // 8 is the maximum size that can be checked
+
+    /* open file and test for it being a png */
+    FILE *fp = fopen(file_name, "rb");
+    if (!fp)
     {
-        int width, height;
-        png_byte color_type;
-        png_byte bit_depth;
+        abort_("[read_png_file] File %s could not be opened for reading", file_name);
+    }
+    fread(cHeader, 1, 8, fp);
+    if (png_sig_cmp((png_const_bytep)cHeader, 0, 8))
+    {
+        abort_("[read_png_file] File %s is not recognized as a PNG file", file_name);
+    }
 
-        png_structp png_ptr;
-        png_infop info_ptr;
-        int number_of_passes;
-        png_bytep *row_pointers;
-    };
+    /* initialize stuff */
+    result.png_ptr = png_create_read_struct(PNG_LIBPNG_VER_STRING, NULL, NULL, NULL);
 
-    
+    if (!result.png_ptr)
+        abort_("[read_png_file] png_create_read_struct failed");
 
+    result.info_ptr = png_create_info_struct(result.png_ptr);
+    if (!result.info_ptr)
+        abort_("[read_png_file] png_create_info_struct failed");
 
-} // namespace mypng
+    if (setjmp(png_jmpbuf(result.png_ptr)))
+        abort_("[read_png_file] Error during init_io");
+
+    png_init_io(result.png_ptr, fp);
+    png_set_sig_bytes(result.png_ptr, 8);
+
+    png_read_info(result.png_ptr, result.info_ptr);
+
+    result.width = png_get_image_width(result.png_ptr, result.info_ptr);
+    result.height = png_get_image_height(result.png_ptr, result.info_ptr);
+    result.color_type = png_get_color_type(result.png_ptr, result.info_ptr);
+    result.bit_depth = png_get_bit_depth(result.png_ptr, result.info_ptr);
+
+    result.number_of_passes = png_set_interlace_handling(result.png_ptr);
+    png_read_update_info(result.png_ptr, result.info_ptr);
+
+    /* read file */
+    if (setjmp(png_jmpbuf(result.png_ptr)))
+        abort_("[read_png_file] Error during read_image");
+
+    result.row_pointers = (png_bytep *)malloc(sizeof(png_bytep) * result.height);
+    for (size_t y = 0; y < result.height; y++)
+        result.row_pointers[y] = (png_byte *)malloc(png_get_rowbytes(result.png_ptr, result.info_ptr));
+
+    png_read_image(result.png_ptr, result.row_pointers);
+
+    fclose(fp);
+    return result;
+}
+picture::picture(pngData png)
+{
+    width = png.width;
+    height = png.height;
+    bit_depth = png.bit_depth;
+    pixels = (pixel **)malloc(sizeof(void *) * height);
+    for (size_t y = 0; y < height; y++)
+    {
+        pixels[y] = (pixel *)malloc(sizeof(pixel) * width);
+        for (size_t x = 0; x < width; x++)
+        {
+            pixels[y][x].R = png.row_pointers[y][x * 4 + 0];
+            pixels[y][x].G = png.row_pointers[y][x * 4 + 1];
+            pixels[y][x].B = png.row_pointers[y][x * 4 + 2];
+            pixels[y][x].A = png.row_pointers[y][x * 4 + 3];
+        }
+    }
+}
+int picture::getMaxPixelVal()
+{
+    int ret = 2;
+    for (int i = 1; i < bit_depth; i++)
+    {
+        ret *= 2;
+    }
+    return ret - 1;
+}
+
+picture::~picture()
+{
+    for (int i = 0; i < height; i++)
+        free(pixels[i]);
+
+    free(pixels);
+}
