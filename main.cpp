@@ -9,8 +9,8 @@ int main(int argc, char const *argv[])
     Log.setTarget(Target::STDOUT);
 
     Log.LogInfo(profiler.getTimingsAsString());
-    read_png_file((char*)"test.png");
-    process_file();
+    //read_png_file((char*)"test.png");
+    //process_file();
     //mypng::write_png_file((char*)"test2.png");
     
     return 0;

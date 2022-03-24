@@ -63,7 +63,7 @@ struct pngData
 };
 
 pngData read_ARGB_png_file(char *file_name);
-
+ 
 struct pixel
 {
     int R, G, B, A;
