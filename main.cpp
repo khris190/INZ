@@ -1,17 +1,23 @@
+
 #include <stdio.h>
 #include "includes/Util/Logger.hpp"
 #include "includes/Util/Profiler.hpp"
 #include "includes/png/libpng.hpp"
+#include "artGeneration.hpp"
 
 int main(int argc, char const *argv[])
-{
-    Log.setFile("Log.log", true);
-    Log.setTarget(Target::STDOUT);
 
-    Log.LogInfo(profiler.getTimingsAsString());
-    //read_png_file((char*)"test.png");
-    //process_file();
-    //mypng::write_png_file((char*)"test2.png");
-    
+{
+    {
+    newTimer("mainTestTimepr");
+    Log.setFile("Log.log", true);
+    Log.setTarget(Target::LOG_FILE);
+    Picture pic((char *)"test.jpg");
+    artGeneration gen;
+    gen.fitnessPopulation(pic.image);
+    Gene testGene;
+    testGene.createRandom();
+    }
+    Log.LogInfo(Profiler::getInstance()->getTimingsAsString());
     return 0;
 }
