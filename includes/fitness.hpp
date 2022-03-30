@@ -3,10 +3,12 @@
 #define FITNESS_HPP
 
 #include <cstdlib>
-#include "CImg.h"
+//#include "CImg.h"
+#include <cairo/cairo.h>
+#include "Util/Profiler.hpp"
 
 
-float fitness_v1(unsigned char &pA, unsigned char &pB);
-float fitness(cimg_library::CImg<unsigned char> &img, cimg_library::CImg<unsigned char> &generated);
+float fitness_v1_RGBA(unsigned char *pA, unsigned char *pB);
+float fitness(cairo_surface_t *img, cairo_surface_t *surface);
 
 #endif // FITNESS_HPP

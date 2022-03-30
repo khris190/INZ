@@ -80,7 +80,9 @@
 			"shared_mutex": "cpp",
 			"bitset": "cpp",
 			"*.ipp": "cpp",
-			"complex": "cpp"
+			"complex": "cpp",
+			"strstream": "cpp",
+			"any": "cpp"
 		}
 	}
 }

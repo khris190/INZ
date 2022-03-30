@@ -2,33 +2,46 @@
 #include "fitness.hpp"
 
 
-float fitness_v1(unsigned char &pA, unsigned char &pB)
-{
-    return (float)(255 - std::abs(pA - pB)) / 255.f;
+float fitness_v1_RGBA(unsigned char *pA, unsigned char *pB)
+{   
+    auto absR = (float)std::abs(pA[0] - pB[0]);
+    auto absG = (float)std::abs(pA[1] - pB[1]);
+    auto absB = (float)std::abs(pA[2] - pB[2]);
+    auto absA = (float)std::abs(pA[3] - pB[3]);
+    auto val2 = (absR + absG + absB) + absA;
+    return (float)(255.f - val2 / 4.f) / 255.f;
 }
 
-float fitness(cimg_library::CImg<unsigned char> &img, cimg_library::CImg<unsigned char> &generated)
+float fitness(cairo_surface_t *img, cairo_surface_t *surface)
 {
-    int temp_offset;
-    int offset = img._width * img._height;
-    float tmp_fitness = 0, row_fitness = 0, img_fitness = 0;
-    for (size_t y = 0; y < img._height; y++)
-    {
-        for (size_t x = 0; x < img._width; x++)
-        {
-            temp_offset = y * img._width + x;
+    newTimer("fitness whole");
+    unsigned char *img_data = cairo_image_surface_get_data(img);
+    unsigned char *surface_data = cairo_image_surface_get_data(surface);
 
-            tmp_fitness += fitness_v1(img._data[temp_offset], generated._data[temp_offset]);
-            tmp_fitness += fitness_v1(img._data[temp_offset + offset], generated._data[temp_offset + offset]);
-            tmp_fitness += fitness_v1(img._data[temp_offset + offset * 2], generated._data[temp_offset + offset * 2]);
-            tmp_fitness /= 3.f;
+    int _width, _height;
+
+    _width = cairo_image_surface_get_width(img);
+    _height = cairo_image_surface_get_height(img);
+
+    int temp_offset;
+    int offset = _width * _height;
+    float tmp_fitness = 0, row_fitness = 0, img_fitness = 0;
+
+    newTimer("fitness loop");
+    for (size_t y = 0; y < _height; y++)
+    {
+        for (size_t x = 0; x < _width; x++)
+        {
+            temp_offset = y * _width + x;
+
+            tmp_fitness += fitness_v1_RGBA(img_data + temp_offset * 4, surface_data + temp_offset * 4);
             row_fitness += tmp_fitness;
             tmp_fitness = 0;
         }
-        row_fitness /= img._width;
+        row_fitness /= _width;
         img_fitness += row_fitness;
         row_fitness = 0;
     }
-    img_fitness /= img._height;
+    img_fitness /= _height;
     return img_fitness;
 }

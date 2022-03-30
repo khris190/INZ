@@ -50,22 +50,29 @@ SET (CMAKE_RUNTIME_OUTPUT_DIRECTORY ${BINARY_DIR})
 SET(CIMG_PNG_CCFLAGS  -Dcimg_use_png)
 
 
+set(CMAKE_MODULE_PATH ${CMAKE_SOURCE_DIR}/cmake)  
+
+
 include(CPack)
-find_package(OpenGL REQUIRED)
-find_package(glm REQUIRED)
-find_package(GLEW REQUIRED)
-find_package(SDL2 REQUIRED)
-find_package(DevIL REQUIRED)
-find_package(glfw3 3.3 REQUIRED)
+#find_package(OpenGL REQUIRED)
+#find_package(glm REQUIRED)
+#find_package(GLEW REQUIRED)
+#find_package(SDL2 REQUIRED)
+#find_package(DevIL REQUIRED)
+#find_package(glfw3 3.3 REQUIRED)
 find_package(PNG REQUIRED)
+find_package(Cairo REQUIRED)
 
 
 #  ${X11_INCLUDE_DIR}  ${X11_LIBRARIES}  might be needed but i don't know yet
-SET(INCLUDE_DIRS ${OpenGL_INCLUDE_DIRS} ${SDL2_INCLUDE_DIRS} ${GLEW_INCLUDE_DIRS} ${Assimp_INCLUDE_DIRS} ${IL_INCLUDE_DIR} ${GLFW_INCLUDE_DIRS} ${GLM_INCLUDE_DIRS} ${PNG_INCLUDE_DIR} includes)
-SET(LIBS ${LIBS} ${OpenGL_LIBRARIES} ${SDL2_LIBRARIES} ${GLEW_LIBRARIES} ${Assimp_LIBRARIES} ${IL_LIBRARIES} ${ILU_LIBRARIES} ${ILUT_LIBRARIES} ${PNG_LIBRARY} ${GLFW_LIBRARIES} ${GLM_LIBRARIES})
+#SET(INCLUDE_DIRS ${OpenGL_INCLUDE_DIRS} ${SDL2_INCLUDE_DIRS} ${GLEW_INCLUDE_DIRS} ${Assimp_INCLUDE_DIRS} ${IL_INCLUDE_DIR} ${GLFW_INCLUDE_DIRS} ${GLM_INCLUDE_DIRS} ${PNG_INCLUDE_DIR} includes)
+#SET(LIBS ${LIBS} ${OpenGL_LIBRARIES} ${SDL2_LIBRARIES} ${GLEW_LIBRARIES} ${Assimp_LIBRARIES} ${IL_LIBRARIES} ${ILU_LIBRARIES} ${ILUT_LIBRARIES} ${PNG_LIBRARY} ${GLFW_LIBRARIES} ${GLM_LIBRARIES})
+
+SET(INCLUDE_DIRS ${Cairo_INCLUDE_DIRS} ${PNG_INCLUDE_DIR} includes)
+SET(LIBS ${LIBS} ${Cairo_LIBRARIES} ${GLM_LIBRARIES})
 
 include_directories(${INCLUDE_DIRS}) 
 #include_directories(${INCLUDE_DIRS} ${SOURCES_DIRS})
 
-target_link_libraries(${PROJECT_NAME} ${SOURCES} ${LIBS} glfw -lGL -lpng -lX11)
+target_link_libraries(${PROJECT_NAME} ${SOURCES} ${LIBS} -lcairo -lX11)
 #target_link_libraries(${PROJECT_NAME} ${LIBS} glfw -lGL)
