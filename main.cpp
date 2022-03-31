@@ -7,7 +7,6 @@
 
 int main(int argc, char const *argv[])
 {
-    
     ParseMainArguments(argc, argv);
 
     {
