@@ -11,7 +11,6 @@ int main(int argc, char const *argv[])
         std::cout << argv[i] << std::endl;
     }
 
-
     {
         newTimer("mainTestTimepr");
         Log.setFile("Log.log", true);
