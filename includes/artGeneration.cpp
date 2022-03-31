@@ -42,7 +42,7 @@ void asyncFitness(cairo_surface_t *img, Genotype **children, int *Best1, int *Be
     }
 }
 
-int artGeneration::fitnessPopulation(cairo_surface_t *img, float simmilarity)
+int artGeneration::fitnessPopulation(cairo_surface_t *img)
 {
     const int ThreadCount = 8;
     newTimer("fitness population: ");
@@ -110,24 +110,6 @@ int artGeneration::fitnessPopulation(cairo_surface_t *img, float simmilarity)
                 }
             }
         }
-
-        // for (size_t i = 0; i < this->children_size; i++)
-        // {
-        //     cairo_surface_t *temp_surface = cairo_image_surface_create(CAIRO_FORMAT_ARGB32, _width, _height);
-        //     {
-        //         newTimer("drawing");
-        //         this->children[i]->Draw(temp_surface);
-        //     }
-        //     newTimer("fitness calculation");
-        //     float score = fitness(img, temp_surface);
-        //     if (bestScore < score)
-        //     {
-        //         bestScore = score;
-        //         this->parent2 = this->parent1;
-        //         this->parent1 = i;
-        //     }
-        //     cairo_surface_destroy(temp_surface);
-        // }
         if (wiggleCounter % 4 == 3)
         {
             wiggleCounter++;
@@ -138,7 +120,7 @@ int artGeneration::fitnessPopulation(cairo_surface_t *img, float simmilarity)
             {
                 if (i != parent1 && i != parent2)
                 {
-                    this->children[i]->wiggle(0.01);
+                    this->children[i]->wiggle(Config::Mutation.value * 2);
                 }
             }
         }
@@ -146,7 +128,7 @@ int artGeneration::fitnessPopulation(cairo_surface_t *img, float simmilarity)
         {
             wiggleCounter++;
             newTimer("making children");
-            this->makeChildren(0.005);
+            this->makeChildren(Config::Mutation.value);
         }
 
         if (lastScore == bestScore)
@@ -159,7 +141,7 @@ int artGeneration::fitnessPopulation(cairo_surface_t *img, float simmilarity)
         }
         if (noChangesCounter >= 10)
         {
-            this->makeChildren(0.01);
+            this->makeChildren(Config::Mutation.value * 2);
         }
 
         lastScore = bestScore;
@@ -168,24 +150,14 @@ int artGeneration::fitnessPopulation(cairo_surface_t *img, float simmilarity)
             savedBestScore = bestScore;
             cairo_surface_t *temp_surface = cairo_image_surface_create(CAIRO_FORMAT_ARGB32, _width, _height);
             this->Draw(temp_surface, this->parent1);
-            cairo_surface_write_to_png(temp_surface, "bestest.png");
+            cairo_surface_write_to_png(temp_surface, Config::Output_name.value.c_str());
 
             cairo_surface_destroy(temp_surface);
         }
 
         std::cout << noChangesCounter << ". " << savedBestScore - bestScore << " new: " << bestScore << std::endl;
-    } while (bestScore < simmilarity);
-    newTimer("saving best ones");
-    cairo_surface_t *temp_surface = cairo_image_surface_create(CAIRO_FORMAT_ARGB32, _width, _height);
-    this->Draw(temp_surface, this->parent1);
-    cairo_surface_write_to_png(temp_surface, "best1.png");
+    } while (bestScore < Config::Resemblance.value);
 
-    cairo_surface_t *temp_surface2 = cairo_image_surface_create(CAIRO_FORMAT_ARGB32, _width, _height);
-    this->Draw(temp_surface2, this->parent2);
-    cairo_surface_write_to_png(temp_surface2, "best2.png");
-
-    cairo_surface_destroy(temp_surface);
-    cairo_surface_destroy(temp_surface2);
     // return best;
 }
 void artGeneration::generateFirstPopulation(int children_size, int genotype_size)

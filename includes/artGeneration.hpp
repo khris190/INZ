@@ -7,6 +7,7 @@
 #include <cairo/cairo.h>
 #include <thread>
 #include "Genes/Genotype.hpp"
+#include "Config/Config.hpp"
 
 
 struct point
@@ -39,7 +40,7 @@ private:
 public:
     artGeneration(int children_size = 50, int genotype_size = 64);
     void Draw(cairo_surface_t *img, size_t index);
-    int fitnessPopulation(cairo_surface_t *img, float simmilarity = 0.8f);
+    int fitnessPopulation(cairo_surface_t *img);
     ~artGeneration();
 };
 

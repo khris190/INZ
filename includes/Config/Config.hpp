@@ -2,6 +2,7 @@
 #define CONFIG_HPP
 
 #include <string>
+#include <typeinfo>
 
 template <typename T>
 struct Argument
@@ -20,11 +21,11 @@ inline Argument<T>::Argument(T val_, std::string Regex_tag_, std::string Value_r
     {
         if (typeid(T) == typeid(int))
         {
-            Value_regex_tag = "[\\d]+"
+            Value_regex_tag = "[\\d]+";
         }
         else if (typeid(T) == typeid(float))
         {
-            Value_regex_tag = "[\\d.]+"
+            Value_regex_tag = "[\\d.]+";
         }
     }
     
@@ -33,7 +34,9 @@ inline Argument<T>::Argument(T val_, std::string Regex_tag_, std::string Value_r
 
 namespace Config
 {
+
     extern Argument<std::string> Input_name;
+    extern Argument<std::string> Output_name;
     extern Argument<int> Thread_count;
     extern Argument<int> Population_size;
     extern Argument<int> Shape_amount;
