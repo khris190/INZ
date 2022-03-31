@@ -2,6 +2,7 @@
 #define LOGGER_HPP
 
 #include <string>
+#include <cstring>
 #include <iostream>
 #include <fstream>
 #include <stdio.h>
@@ -22,6 +23,9 @@ using std::ofstream;
 using std::shared_ptr;
 using std::string;
 using std::chrono::system_clock;
+
+size_t cpyChar(char *dest, const char *src);
+size_t cpyChar(char *dest, unsigned int src);
 
 enum class Target : short
 {
@@ -205,7 +209,6 @@ public:
             return;
         }
         {
-            newTimer("getFunctioninfo and shiz");
             toLogger += getLoggerfunctionInfo(level, location);
         }
 
@@ -218,7 +221,6 @@ public:
         {
             toLogger += message + "\n";
         }
-        newTimer("writing to outputs");
         // printf makes printing a bit faster
         // Logger to stdout if it's one of our targets
         if ((this->LoggerTarget & (short)Target::STDOUT))
@@ -253,7 +255,12 @@ public:
                 struct tm *timeStruct = std::localtime(&time);
                 strftime(this->timeStr, 80, "%d/%b/%Y:%H:%M:%S", timeStruct);
             }
-            toLogger += "[" + string(this->timeStr) + "] ";
+            char *cstring = (char *)malloc(sizeof(char) * 90);
+            size_t test = cpyChar(cstring, "[");
+            test += cpyChar(cstring + test, this->timeStr);
+            test += cpyChar(cstring + test, "] ");
+            toLogger += cstring;
+            free(cstring);
         }
 
         if (this->levelEnabled)
@@ -263,13 +270,22 @@ public:
 
         if (this->fileEnabled)
         {
-            toLogger += location.file_name();
-            toLogger += ":";
-            toLogger += std::to_string(location.line());
-            toLogger += ":";
-            toLogger += std::to_string(location.column());
-            toLogger += "  ";
-            toLogger += location.function_name();
+            size_t fileNameSize = strlen(location.file_name());
+            size_t funcNameSize = strlen(location.function_name());
+            size_t stringSize = fileNameSize + funcNameSize + 20 + 5;
+
+            char *cstring = (char *)malloc(sizeof(char) * (stringSize));
+
+            size_t test = cpyChar(cstring, location.file_name());
+            test += cpyChar(cstring + test, ":");
+            test += cpyChar(cstring + test, location.line());
+            test += cpyChar(cstring + test, ";");
+            test += cpyChar(cstring + test, location.column());
+            test += cpyChar(cstring + test, "  ");
+            test += cpyChar(cstring + test, location.function_name());
+
+            toLogger += cstring;
+            free(cstring);
         }
         return toLogger;
     }
@@ -401,5 +417,40 @@ inline Target operator|(Target a, Target b)
     return static_cast<Target>(static_cast<short>(a) | static_cast<short>(b));
 }
 #pragma endregion Bit - wise operators
+
+inline size_t cpyChar(char *dest, const char *src)
+{
+    size_t i = 0;
+    while (src[i] != '\0')
+    {
+        dest[i] = src[i];
+        i++;
+    }
+    dest[i] = src[i];
+    return i;
+}
+inline size_t cpyChar(char *dest, unsigned int src)
+{
+    size_t y = 0;
+    char *numbers = (char *)malloc(sizeof(char) * 10);
+
+    while (src >= 10)
+    {
+        numbers[y] = '0' + src % 10;
+        src /= 10;
+        y++;
+    }
+    numbers[y] = '0' + src;
+    y++;
+    size_t i = 0;
+    for (i = 0; i < y; i++)
+    {
+        dest[i] = numbers[y - i - 1];
+    }
+    dest[i] = '\0';
+
+    free(numbers);
+    return i;
+}
 
 #endif

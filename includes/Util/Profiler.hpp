@@ -11,14 +11,14 @@
 
 struct Sample
 {
-    int nsTime;
+    long nsTime;
     std::string name;
     Sample() {}
     Sample(std::string name)
     {
         this->name = name;
     }
-    Sample(std::string name, int nsTime)
+    Sample(std::string name, long nsTime)
     {
         this->name = name;
         this->nsTime = nsTime;
@@ -29,85 +29,27 @@ class Profiler
 {
 private:
     std::vector<Sample> samples;
+    static Profiler *profiler;
+
+protected:
+    Profiler();
+    ~Profiler();
 
 public:
-    Profiler()
-    {
-    }
-    inline void AddSample(Sample sample)
-    {
-        bool foundSample = false;
+    Profiler(Profiler &other) = delete;
+    void operator=(const Profiler &) = delete;
 
-        for (size_t i = 0; i < samples.size(); i++)
-        {
-            if (sample.name == samples[i].name)
-            {
-                samples[i].nsTime += sample.nsTime;
-                foundSample = true;
-                break;
-            }
-        }
-        if (!foundSample)
-        {
-            samples.push_back(sample);
-        }
-    }
-    std::string getTimingsAsString(bool doClearSamples = true)
-    {
-        std::string retString;
-        #ifdef DEBUG
-        retString += "DEBUG TIMINGS!!!\n";
-        #endif
-        for (size_t i = 0; i < samples.size(); i++)
-        {
-            retString += samples[i].name + ": ";
-            retString += std::to_string(samples[i].nsTime) + "ns.\n";
-        }
-        if (doClearSamples)
-        {
-            clearSamples();
-        }
-        return retString;
-    }
+    static Profiler *getInstance();
+    void AddSample(Sample sample);
+    std::string getTimingsAsString(bool doClearSamples = true);
 
-    std::vector<Sample> getTimings(bool doClearSamples = true)
-    {
-        std::vector<Sample> retSample;
+    std::vector<Sample> getTimings(bool doClearSamples = true);
 
-        for (size_t i = 0; i < samples.size(); i++)
-        {
-            retSample.push_back(Sample(samples[i].name, samples[i].nsTime));
-        }
-        if (doClearSamples)
-        {
-            clearSamples();
-        }
-
-        return retSample;
-    }
-
-    void clearSamples()
-    {
-        samples.clear();
-    }
-    void printProfilerData(bool doClearSamples = true)
-    {
-        for (size_t i = 0; i < samples.size(); i++)
-        {
-            std::cout << samples[i].name << ": " << samples[i].nsTime << "ns" << std::endl;
-        }
-        if (doClearSamples)
-        {
-            clearSamples();
-        }
-    }
-    ~Profiler()
-    {
-        clearSamples();
-    }
+    void clearSamples();
+    void printProfilerData(bool doClearSamples = true);
 };
 
-static Profiler profiler;
+
 
 #define TOKENPASTE(x, y) x##y
 #define TOKENPASTE2(x, y) TOKENPASTE(x, y)
@@ -121,16 +63,8 @@ private:
     std::chrono::_V2::system_clock::time_point startTime;
 
 public:
-    PTimer(std::string name)
-    {
-        sample.name = name;
-        startTime = std::chrono::system_clock::now();
-    }
-    ~PTimer()
-    {
-        sample.nsTime = std::chrono::duration<int, std::nano>(std::chrono::system_clock::now() - startTime).count();
-        profiler.AddSample(sample);
-    }
+    PTimer(std::string name);
+    ~PTimer();
 };
 
 #endif // PROFILER_HPP
