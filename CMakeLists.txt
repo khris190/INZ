@@ -26,6 +26,8 @@ set(CMAKE_CXX_FLAGS_DEBUG "-g -D DEBUG")
 
 set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 
+set(CMAKE_VERBOSE_MAKEFILE ON)
+
 
 #linking cpp and hpp files in includes/ and includes/*/ directories 
 file(GLOB SOURCES
@@ -63,8 +65,6 @@ include(CPack)
 find_package(PNG REQUIRED)
 find_package(Cairo REQUIRED)
 
-add_library( glibc STATIC IMPORTED)
-
 #  ${X11_INCLUDE_DIR}  ${X11_LIBRARIES}  might be needed but i don't know yet
 #SET(INCLUDE_DIRS ${OpenGL_INCLUDE_DIRS} ${SDL2_INCLUDE_DIRS} ${GLEW_INCLUDE_DIRS} ${Assimp_INCLUDE_DIRS} ${IL_INCLUDE_DIR} ${GLFW_INCLUDE_DIRS} ${GLM_INCLUDE_DIRS} ${PNG_INCLUDE_DIR} includes)
 #SET(LIBS ${LIBS} ${OpenGL_LIBRARIES} ${SDL2_LIBRARIES} ${GLEW_LIBRARIES} ${Assimp_LIBRARIES} ${IL_LIBRARIES} ${ILU_LIBRARIES} ${ILUT_LIBRARIES} ${PNG_LIBRARY} ${GLFW_LIBRARIES} ${GLM_LIBRARIES})
@@ -77,3 +77,5 @@ include_directories(${INCLUDE_DIRS})
 
 target_link_libraries(${PROJECT_NAME} ${SOURCES} ${LIBS} -lcairo -lX11)
 #target_link_libraries(${PROJECT_NAME} ${LIBS} glfw -lGL)
+
+

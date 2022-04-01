@@ -29,10 +29,10 @@ size_t cpyChar(char *dest, unsigned int src);
 
 enum class Target : short
 {
-    DISABLED = 1,
-    STDOUT = 2,
-    STDERR = 4,
-    LOG_FILE = 8
+    DISABLED = 0,
+    STDOUT = 1,
+    STDERR = 2,
+    LOG_FILE = 4
 };
 
 enum class Level : short
@@ -204,7 +204,7 @@ public:
         }
 
         // Target::DISABLED takes precedence over other targets
-        if ((this->LoggerTarget & (short)Target::DISABLED))
+        if ((this->LoggerTarget == (short)Target::DISABLED))
         {
             return;
         }

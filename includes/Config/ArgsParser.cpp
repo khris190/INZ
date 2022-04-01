@@ -66,15 +66,22 @@ void ParseMainArguments(int argc, char const *argv[])
     {
         MatchAndSetArg(Config::Input_name, argv, i);
         MatchAndSetArg(Config::Output_name, argv, i);
+
+
         MatchAndSetArg(Config::Thread_count, argv, i);
         MatchAndSetArg(Config::Population_size, argv, i);
         MatchAndSetArg(Config::Shape_amount, argv, i);
         MatchAndSetArg(Config::Shape_types, argv, i);
         MatchAndSetArg(Config::Resemblance, argv, i);
         MatchAndSetArg(Config::Mutation, argv, i);
-        MatchAndSetArg(Config::Verboise, argv, i);
-        MatchAndSetArg(Config::Log_to_file, argv, i);
-        MatchAndSetArg(Config::Log_to_file_name, argv, i);
+
+
+        if(MatchAndSetArg(Config::Verboise, argv, i))
+            MatchAndSetArg(Config::Verboise_level, argv, i);
+
+        if(MatchAndSetArg(Config::Log_to_file, argv, i))
+            MatchAndSetArg(Config::Log_to_file_name, argv, i);
     }
+    //set population to multiple of thread count (idk if needed i just thought that it might be and it makes program a tiny bit faster)
     Config::Population_size.value += Config::Population_size.value % Config::Thread_count.value;
 }

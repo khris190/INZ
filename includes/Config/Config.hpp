@@ -34,16 +34,23 @@ inline Argument<T>::Argument(T val_, std::string Regex_tag_, std::string Value_r
 
 namespace Config
 {
-
+    //io
     extern Argument<std::string> Input_name;
     extern Argument<std::string> Output_name;
+
+
+    //program
     extern Argument<int> Thread_count;
     extern Argument<int> Population_size;
     extern Argument<int> Shape_amount;
     extern Argument<int> Shape_types;
     extern Argument<float> Resemblance;
     extern Argument<float> Mutation;
+
+
+    //logging and info
     extern Argument<bool> Verboise;
+    extern Argument<int> Verboise_level;
     extern Argument<bool> Log_to_file;
     extern Argument<std::string> Log_to_file_name;
     
