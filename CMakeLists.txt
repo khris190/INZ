@@ -63,6 +63,7 @@ include(CPack)
 find_package(PNG REQUIRED)
 find_package(Cairo REQUIRED)
 
+add_library( glibc STATIC IMPORTED)
 
 #  ${X11_INCLUDE_DIR}  ${X11_LIBRARIES}  might be needed but i don't know yet
 #SET(INCLUDE_DIRS ${OpenGL_INCLUDE_DIRS} ${SDL2_INCLUDE_DIRS} ${GLEW_INCLUDE_DIRS} ${Assimp_INCLUDE_DIRS} ${IL_INCLUDE_DIR} ${GLFW_INCLUDE_DIRS} ${GLM_INCLUDE_DIRS} ${PNG_INCLUDE_DIR} includes)

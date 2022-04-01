@@ -7,9 +7,4 @@
 #include <regex>
 
 void ParseMainArguments(int argc, char const *argv[]);
-
-
-
-
-
 #endif // ARGSPARSER_HPP
