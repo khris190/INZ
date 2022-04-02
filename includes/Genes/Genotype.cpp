@@ -6,8 +6,26 @@ Genotype::Genotype(int size_)
     GeneArr = (Gene *)malloc(sizeof(Gene) * size_);
     for (size_t i = 0; i < size_; i++)
     {
-
         GeneArr[i].createRandom();
+    }
+}
+
+void Genotype::Swap_random(float mutation_rate)
+{
+    for (size_t i = 0; i < size; i++)
+    {   
+        if (fRand() <= mutation_rate)
+        {
+            int swap = rand()% size;
+            while (swap == i)
+            {
+                swap = rand()% size;
+            }
+            
+            Gene tmp = GeneArr[i];
+            GeneArr[i] = GeneArr[swap];
+            GeneArr[swap] = tmp;
+        }
     }
 }
 
@@ -15,14 +33,15 @@ void Genotype::mutate(float mutation_rate)
 {
     for (size_t i = 0; i < size; i++)
     {
-        GeneArr[i].mutate(0.10f);
+        GeneArr[i].mutate(mutation_rate);
     }
+    Swap_random(mutation_rate);
 }
 void Genotype::wiggle(float mutation_rate)
 {
     for (size_t i = 0; i < size; i++)
     {
-        GeneArr[i].wiggle(0.10f);
+        GeneArr[i].wiggle(mutation_rate);
     }
 }
 
@@ -58,17 +77,16 @@ void Genotype::cross(Genotype *parent1_, Genotype *parent2_, float mutation_rate
             }
         }
 
-        this->GeneArr[i].mutate(mutation_rate);
     }
+        this->mutate(mutation_rate);
 }
-
 
 inline position_2D rotate(float x, float y, float angle)
 {
     return position_2D(x * cos(angle) - y * sin(angle), x * sin(angle) + y * cos(angle));
 }
 
-void Genotype::Draw(cairo_surface_t *img)
+void Genotype::Draw(cairo_surface_t *img, float Scale)
 {
     cairo_t *cr;
     for (size_t i = 0; i < size; i++)
@@ -88,8 +106,8 @@ void Genotype::Draw(cairo_surface_t *img)
         int x = GeneArr[i].position.x * _width;
         int y = GeneArr[i].position.y * _height;
 
-        float scaleX = GeneArr[i].scale.x * _width / 8;
-        float scaleY = GeneArr[i].scale.y * _height / 8;
+        float scaleX = GeneArr[i].scale.x * _width * Scale * 0.5;
+        float scaleY = GeneArr[i].scale.y * _height * Scale * 0.5;
         float rotation = GeneArr[i].rotation * 3.14;
 
         // kwadrat

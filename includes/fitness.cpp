@@ -14,7 +14,6 @@ float fitness_v1_RGBA(unsigned char *pA, unsigned char *pB)
 
 float fitness(cairo_surface_t *img, cairo_surface_t *surface)
 {
-    newTimer("fitness whole");
     unsigned char *img_data = cairo_image_surface_get_data(img);
     unsigned char *surface_data = cairo_image_surface_get_data(surface);
 
@@ -27,7 +26,6 @@ float fitness(cairo_surface_t *img, cairo_surface_t *surface)
     int offset = _width * _height;
     float tmp_fitness = 0, row_fitness = 0, img_fitness = 0;
 
-    newTimer("fitness loop");
     for (size_t y = 0; y < _height; y++)
     {
         for (size_t x = 0; x < _width; x++)

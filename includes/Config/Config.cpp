@@ -5,11 +5,11 @@ namespace Config
 
     // Iutput image fileName
     //    -i --iutput           <file.png>
-    Argument<std::string> Input_name("test.png", "(^\\-i$)|(^\\-\\-input$)", "(^[\\w\\s\\d\\-.,]+\\.png$)");    
+    Argument<std::string> Input_name("test.png", "(^\\-i$)|(^\\-\\-input$)", "(^[\\w\\s\\d\\-/.,]+\\.png$)");    
 
     // Output image fileName
     //    -o --output           <file.png>
-    Argument<std::string> Output_name("Out.png", "(^\\-o$)|(^\\-\\-output$)", "(^[\\w\\s\\d\\-.,]+\\.png$)");
+    Argument<std::string> Output_name("Out.png", "(^\\-o$)|(^\\-\\-output$)", "(^[\\w\\s\\d\\-/.,]+\\.png$)");
 
     // Anount of threads that the program will use for calculations  
     //    -t --threads          <int>
@@ -34,23 +34,23 @@ namespace Config
     //    -r --resemblance      <float> 
     Argument<float> Resemblance(0.f, "(^\\-r$)|(^\\-\\-resemblance$)");
 
+    // % scale of shapes 1 means a shape can take the whole canvas
+    //    --scale               <float> 
+    Argument<float> Scale(0.5f, "(^\\-\\-scale$)");
+
     // % chance of mutation
     //    -m --mutation         <float>
     Argument<float> Mutation(0.005f, "(^\\-m$)|(^\\-\\-mutation$)");
 
     // print info during program runtime
     //    -v --verbose
-    // TODO implement Argument<bool> Verboise
-    // TODO implement verboise levels with logger probably
-    Argument<bool> Verboise(0, "(^\\-v$)|(^\\-\\-verboise$)");
+    Argument<bool> Verbose(0, "(^\\-v$)|(^\\-\\-verbose$)");
 
     //  print info during program runtime
-    //    -v --verbose         
-    // TODO implement Argument<bool> Verboise
-    // TODO implement verboise levels with logger probably
-    Argument<int> Verboise_level(0, "(^\\-v$)|(^\\-\\-verboise$)");
+    //    -v --verbose
+    Argument<int> Verbose_level(2, "(^\\-v$)|(^\\-\\-verbose$)");
 
-    // print Logs to "Log.log" (best used with verboise)
+    // print Logs to "Log.log" (best used with verbose)
     //    -L --log-to-file      
     Argument<bool> Log_to_file(0, "(^\\-L$)|(^\\-\\-log-to-file$)");
 
@@ -58,4 +58,13 @@ namespace Config
     // name of file Log will be saved to
     //    -L --log-to-file      <file>(optional) name of file Log will be saved to
     Argument<std::string> Log_to_file_name("Log.log", "(^\\-L$)|(^\\-\\-log-to-file$)", "^[\\w\\s\\d\\-.,]+");
+
+
+    // Print help
+    //    -h --help      
+    Argument<bool> Help(0, "(^\\-h$)|(^\\-\\-help$)");
+
+    // Print values of Config variables
+    //    -P --help      
+    Argument<bool> Print_Vals(0, "(^\\-P$)|(^\\-\\-print\\-vals$)");
 } // namespace Config

@@ -2,6 +2,7 @@
 #define ARTGENERATION_HPP
 
 #include "fitness.hpp"
+#include "Util/Logger.hpp"
 #include "Util/Profiler.hpp"
 #include <stdlib.h>
 #include <cairo/cairo.h>
@@ -40,7 +41,7 @@ private:
 public:
     artGeneration(int children_size = 50, int genotype_size = 64);
     void Draw(cairo_surface_t *img, size_t index);
-    int fitnessPopulation(cairo_surface_t *img);
+    void StartEvolution(cairo_surface_t *img);
     ~artGeneration();
 };
 

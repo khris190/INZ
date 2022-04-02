@@ -4,11 +4,12 @@ Profiler::Profiler()
 {
 }
 
-Profiler *Profiler::getInstance() {
-  if (!profiler)
-    profiler = new Profiler;
-  return profiler;
-   }
+Profiler *Profiler::getInstance()
+{
+    if (!profiler)
+        profiler = new Profiler;
+    return profiler;
+}
 
 void Profiler::AddSample(Sample sample)
 {
@@ -32,14 +33,22 @@ void Profiler::AddSample(Sample sample)
 std::string Profiler::getTimingsAsString(bool doClearSamples)
 {
     std::string retString;
-    #ifdef DEBUG
+#ifdef DEBUG
     retString += "DEBUG TIMINGS!!!\n";
-    #endif
+#endif
     for (size_t i = 0; i < samples.size(); i++)
     {
         retString += samples[i].name + ": ";
         retString += std::to_string(samples[i].nsTime) + "ns.  ";
-        retString += std::to_string(samples[i].nsTime / 1000000) + "ms.\n";
+        if (samples[i].nsTime > 1000000)
+        {
+            retString += std::to_string(samples[i].nsTime / 1000000) + "ms.  ";
+            if (samples[i].nsTime > 1000000000)
+            {
+                retString += std::to_string(samples[i].nsTime / 1000000000) + "s.";
+            }
+        }
+        retString += "\n";
     }
     if (doClearSamples)
     {
@@ -88,12 +97,10 @@ Profiler::~Profiler()
     {
         delete profiler;
     }
-    
 }
 
-//Initialize pointer to zero so that it can be initialized in first call to getInstance
+// Initialize pointer to zero so that it can be initialized in first call to getInstance
 Profiler *Profiler::profiler = 0;
-
 
 PTimer::PTimer(std::string name)
 {

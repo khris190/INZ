@@ -45,14 +45,18 @@ namespace Config
     extern Argument<int> Shape_amount;
     extern Argument<int> Shape_types;
     extern Argument<float> Resemblance;
+    extern Argument<float> Scale;
     extern Argument<float> Mutation;
 
 
     //logging and info
-    extern Argument<bool> Verboise;
-    extern Argument<int> Verboise_level;
+    extern Argument<bool> Verbose;
+    extern Argument<int> Verbose_level;
     extern Argument<bool> Log_to_file;
     extern Argument<std::string> Log_to_file_name;
+
+    extern Argument<bool> Help;
+    extern Argument<bool> Print_Vals;
     
     
 } // namespace Config

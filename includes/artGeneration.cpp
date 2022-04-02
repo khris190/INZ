@@ -12,15 +12,17 @@ void artGeneration::makeChildren(float mutation_rate, bool doCross)
 }
 void artGeneration::Draw(cairo_surface_t *img, size_t index)
 {
-    this->children[index]->Draw(img);
+    this->children[index]->Draw(img, Config::Scale.value);
 }
 
-// fucking unsave dud
+// no need for safety if there is nothing unsafe
+// TODO change those stupid double pointers for values that are next to each other wtf was i thinking? was it more readable or sth?
 void asyncFitness(cairo_surface_t *img, Genotype **children, int *Best1, int *Best2, float *BestScore1, float *BestScore2, int start, int stop, int _width, int _height)
 {
     *Best1 = -1;
     *Best2 = -1;
-    float bestScore;
+    float bestScore = 0;
+    float bestScore2 = 0;
     *BestScore1 = 0;
     *BestScore2 = 0;
     for (size_t i = start; i < stop; i++)
@@ -32,22 +34,31 @@ void asyncFitness(cairo_surface_t *img, Genotype **children, int *Best1, int *Be
         float score = fitness(img, temp_surface);
         if (bestScore < score)
         {
+            bestScore2 = bestScore;
             bestScore = score;
             *BestScore2 = *BestScore1;
             *BestScore1 = bestScore;
             *Best2 = *Best1;
             *Best1 = i;
         }
+        else if (bestScore2 < score)
+        {
+            bestScore2 = score;
+            *BestScore2 = bestScore2;
+            *Best2 = i;
+        }
+
         cairo_surface_destroy(temp_surface);
     }
 }
 
-int artGeneration::fitnessPopulation(cairo_surface_t *img)
+void artGeneration::StartEvolution(cairo_surface_t *img)
 {
-    const int ThreadCount = 8;
-    newTimer("fitness population: ");
+    const int ThreadCount = Config::Thread_count.value;
     float bestScore = 0;
+    float bestScore2 = 0;
     int noChangesCounter = 0;
+    long MutationsCounter = 0;
     float lastScore = bestScore;
     float savedBestScore = bestScore;
 
@@ -60,11 +71,11 @@ int artGeneration::fitnessPopulation(cairo_surface_t *img)
 
     do
     {
+        newTimer("Evolution: ");
         int best[ThreadCount * 2];
         float bestScores[ThreadCount * 2];
         {
-            newTimer("multithreaded test");
-
+            newTimer("asyncFitness: ");
             std::vector<std::thread> workers;
             int offset = this->children_size / ThreadCount;
             for (size_t i = 0; i < ThreadCount; i++)
@@ -88,13 +99,20 @@ int artGeneration::fitnessPopulation(cairo_surface_t *img)
         this->parent1 = -1;
         this->parent2 = -1;
         bestScore = 0;
+        bestScore2 = 0;
         for (size_t i = 0; i < ThreadCount * 2; i++)
         {
             if (bestScores[i] > bestScore)
             {
+                bestScore2 = bestScore;
                 bestScore = bestScores[i];
                 this->parent2 = this->parent1;
                 this->parent1 = best[i];
+            }
+            else if (bestScores[i] > bestScore2)
+            {
+                bestScore2 = bestScores[i];
+                this->parent2 = best[i];
             }
         }
 
@@ -114,7 +132,6 @@ int artGeneration::fitnessPopulation(cairo_surface_t *img)
         {
             wiggleCounter++;
             std::cout << "WIGGLE " << std::endl;
-            newTimer("wiggle");
             // wiggle
             for (size_t i = 0; i < children_size; i++)
             {
@@ -127,7 +144,6 @@ int artGeneration::fitnessPopulation(cairo_surface_t *img)
         else
         {
             wiggleCounter++;
-            newTimer("making children");
             this->makeChildren(Config::Mutation.value);
         }
 
@@ -141,21 +157,27 @@ int artGeneration::fitnessPopulation(cairo_surface_t *img)
         }
         if (noChangesCounter >= 10)
         {
+            Log.LogInfo("using increased mutation rate");
             this->makeChildren(Config::Mutation.value * 2);
         }
 
         lastScore = bestScore;
+        Log.LogInfo("Score: " + std::to_string(bestScore) + "\nDifference: " + std::to_string(bestScore - savedBestScore));
+        Log.LogDeb(Profiler::getInstance()->getTimingsAsString());
+
         if (bestScore > savedBestScore)
         {
-            savedBestScore = bestScore;
-            cairo_surface_t *temp_surface = cairo_image_surface_create(CAIRO_FORMAT_ARGB32, _width, _height);
-            this->Draw(temp_surface, this->parent1);
-            cairo_surface_write_to_png(temp_surface, Config::Output_name.value.c_str());
+            if (MutationsCounter % 10 == 0)
+            {
+                savedBestScore = bestScore;
+                cairo_surface_t *temp_surface = cairo_image_surface_create(CAIRO_FORMAT_ARGB32, _width, _height);
+                this->Draw(temp_surface, this->parent1);
+                cairo_surface_write_to_png(temp_surface, Config::Output_name.value.c_str());
 
-            cairo_surface_destroy(temp_surface);
+                cairo_surface_destroy(temp_surface);
+            }
+            MutationsCounter++;
         }
-
-        std::cout << noChangesCounter << ". " << savedBestScore - bestScore << " new: " << bestScore << std::endl;
     } while (bestScore < Config::Resemblance.value);
 
     // return best;

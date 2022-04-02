@@ -3,8 +3,9 @@
 
 #include "Config.hpp"
 #include <stdlib.h>
+#include <iostream>
 #include <typeinfo>
 #include <regex>
 
-void ParseMainArguments(int argc, char const *argv[]);
+bool ParseMainArguments(int argc, char const *argv[]);
 #endif // ARGSPARSER_HPP

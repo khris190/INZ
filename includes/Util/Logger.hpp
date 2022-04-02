@@ -48,7 +48,7 @@ enum class Level : short
 };
 
 // String representations of Logger levels
-map<Level, string> levelMap = {
+static map<Level, string> levelMap = {
     {Level::DEB, "DEBUG"},
     {Level::INFO, "INFO"},
     {Level::NOTICE, "NOTICE"},
@@ -58,7 +58,7 @@ map<Level, string> levelMap = {
     {Level::ALERT, "ALERT"},
     {Level::EMERG, "EMERGENCY"}};
 
-std::string getLoggerfunctionInfo(Level level, bool enableLevel = true, bool enableTimeStamp = true, bool enableFunctionInfo = true, const std::source_location location = std::source_location::current());
+// std::string getLoggerfunctionInfo(Level level, bool enableLevel = true, bool enableTimeStamp = true, bool enableFunctionInfo = true, const std::source_location location = std::source_location::current());
 
 class Logger
 {
@@ -190,6 +190,17 @@ public:
      */
     void write(Level level, string message, const std::source_location location)
     {
+        // Only log if we're at or above the pre-defined severity
+        if (level < this->LoggerLevel)
+        {
+            return;
+        }
+        // Target::DISABLED takes precedence over other targets
+        if ((this->LoggerTarget == (short)Target::DISABLED))
+        {
+            return;
+        }
+
         string toLogger;
 
         if (!this->LoggingStream.is_open())
@@ -197,20 +208,7 @@ public:
             setFile(this->LoggerFile);
         }
 
-        // Only Logger if we're at or above the pre-defined severity
-        if (level < this->LoggerLevel)
-        {
-            return;
-        }
-
-        // Target::DISABLED takes precedence over other targets
-        if ((this->LoggerTarget == (short)Target::DISABLED))
-        {
-            return;
-        }
-        {
-            toLogger += getLoggerfunctionInfo(level, location);
-        }
+        toLogger += getLoggerfunctionInfo(level, location);
 
         // Append the message to our Logger statement
         if (this->fileEnabled || this->timestampEnabled || this->levelEnabled)
@@ -405,7 +403,7 @@ public:
 #pragma endregion boolSets
 };
 
-static Logger Log;
+extern Logger Log;
 
 #pragma region Bit - wise operators
 inline Target operator&(Target a, Target b)

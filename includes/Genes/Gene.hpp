@@ -8,6 +8,8 @@ enum shape_type{
     ellipse
 };
 
+
+// TODO implement parametrized shapes
 struct Gene
 {
     shape_type typeOfShape;
