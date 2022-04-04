@@ -52,6 +52,7 @@ void asyncFitness(cairo_surface_t *img, Genotype **children, int *Best1, int *Be
     }
 }
 
+// TODO check why directly after the wiggle increases get really low
 void artGeneration::StartEvolution(cairo_surface_t *img)
 {
     const int ThreadCount = Config::Thread_count.value;
@@ -165,11 +166,11 @@ void artGeneration::StartEvolution(cairo_surface_t *img)
         Log.LogInfo("Score: " + std::to_string(bestScore) + "\nDifference: " + std::to_string(bestScore - savedBestScore));
         Log.LogDeb(Profiler::getInstance()->getTimingsAsString());
 
-        if (bestScore > savedBestScore)
+        if (bestScore >= savedBestScore)
         {
+            savedBestScore = bestScore;
             if (MutationsCounter % 10 == 0)
             {
-                savedBestScore = bestScore;
                 cairo_surface_t *temp_surface = cairo_image_surface_create(CAIRO_FORMAT_ARGB32, _width, _height);
                 this->Draw(temp_surface, this->parent1);
                 cairo_surface_write_to_png(temp_surface, Config::Output_name.value.c_str());
@@ -179,6 +180,11 @@ void artGeneration::StartEvolution(cairo_surface_t *img)
             MutationsCounter++;
         }
     } while (bestScore < Config::Resemblance.value);
+    cairo_surface_t *temp_surface = cairo_image_surface_create(CAIRO_FORMAT_ARGB32, _width, _height);
+    this->Draw(temp_surface, this->parent1);
+    cairo_surface_write_to_png(temp_surface, Config::Output_name.value.c_str());
+
+    cairo_surface_destroy(temp_surface);
 
     // return best;
 }

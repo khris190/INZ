@@ -8,8 +8,8 @@ float fitness_v1_RGBA(unsigned char *pA, unsigned char *pB)
     auto absG = (float)std::abs(pA[1] - pB[1]);
     auto absB = (float)std::abs(pA[2] - pB[2]);
     auto absA = (float)std::abs(pA[3] - pB[3]);
-    auto val2 = (absR + absG + absB) / 1.5 + absA;
-    return (float)(255.f - val2 / 3.f) / 255.f;
+    auto val2 = (absR + absG + absB) + absA;
+    return (float)(255.f - val2 / 4.f) / 255.f;
 }
 
 float fitness(cairo_surface_t *img, cairo_surface_t *surface)

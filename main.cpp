@@ -8,12 +8,6 @@
 // TODO check the whole programm for Logs;
 int main(int argc, char const *argv[])
 {
-
-    float2 test2(2.f, 2.f);
-    float3 test43(2.f, 2.f, 2.f);
-
-
-
     bool argsParsed = ParseMainArguments(argc, argv);
     Log.setTarget(Target::DISABLED);
     Log.setLevel((Level)Config::Verbose_level.value);
