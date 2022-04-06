@@ -14,7 +14,7 @@ void Genotype::Swap_random(float mutation_rate)
 {
     for (size_t i = 0; i < size; i++)
     {   
-        if (fRand() <= mutation_rate)
+        if (fRand() <= mutation_rate / 10)
         {
             int swap = rand()% size;
             while (swap == i)
