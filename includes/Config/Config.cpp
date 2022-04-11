@@ -1,5 +1,6 @@
 #include "Config.hpp"
 
+
 namespace Config
 {
 
@@ -73,6 +74,14 @@ namespace Config
     //    -P --help
     Argument<bool> Print_Vals(0, "(^\\-P$)|(^\\-\\-print\\-vals$)", boolRegex);
     
+
+    std::time_t startTime;
+
+    bool doStop(int SecondsAfterToStop){
+        return (time(nullptr) - startTime) > SecondsAfterToStop;
+    }
+
+
     std::string OutFolderName = "./";
     void CreateFolderForOutput()
     {

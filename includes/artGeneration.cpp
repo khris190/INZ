@@ -179,7 +179,7 @@ void artGeneration::StartEvolution(cairo_surface_t *img)
             }
             MutationsCounter++;
         }
-    } while (bestScore < Config::Resemblance.value);
+    } while (bestScore < Config::Resemblance.value && !Config::doStop());
     cairo_surface_t *temp_surface = cairo_image_surface_create(CAIRO_FORMAT_ARGB32, _width, _height);
     this->Draw(temp_surface, this->parent1);
     cairo_surface_write_to_png(temp_surface, Config::GetOutputFilePathAndFileName(savedBestScore).c_str());

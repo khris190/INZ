@@ -9,6 +9,7 @@
 #include <iostream>
 #include <fstream>
 #include <bitset>
+#include <ctime>
 
 template <typename T>
 struct Argument
@@ -63,6 +64,8 @@ union shapes_switch
 
 namespace Config
 {
+    extern std::time_t startTime;
+    bool doStop(int SecondsAfterToStop = 3600);
     extern std::string OutFolderName;
     void CreateFolderForOutput();
     std::string GetOutputFilePathAndFileName(float Resemblance);

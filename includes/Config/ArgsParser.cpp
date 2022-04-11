@@ -186,5 +186,6 @@ bool ParseMainArguments(int argc, char const *argv[])
         return false;
     }
     Config::CreateFolderForOutput();
+    Config::startTime = std::time(nullptr);
     return true;
 }
