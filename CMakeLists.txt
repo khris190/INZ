@@ -1,7 +1,7 @@
 cmake_minimum_required(VERSION 3.11.0)
 
 #rename Shaders to Your prefered project name
-project(GenerativeArt LANGUAGES CXX VERSION 0.1.0)
+project(GenerativeArt LANGUAGES CXX VERSION 1.1.5)
 
 #uncomment for CTests
 #include(CTest)

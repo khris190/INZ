@@ -1,11 +1,21 @@
 #include "Gene.hpp"
 #include "Randoms.hpp"
 
+shape_type genType()
+{
+    unsigned char out;
+    // reroll while we get stuff that is not turned on
+    do
+    {
+        out = (1 << rand() % Config::shape_types_amount);
+    } while ((out & Config::Shape_types.value.shapes) == 0);
+
+    return (shape_type)out;
+}
 
 void Gene::createRandom()
 {
-    // typeOfShape = rand() % 2;
-    typeOfShape = (shape_type)0;
+    typeOfShape = genType();
     position = position_2D(fRand(), fRand());
     rotation = fRand();
     scale = float2(fRand(), fRand());
@@ -14,7 +24,11 @@ void Gene::createRandom()
 
 void Gene::mutate(float mutation_rate)
 {
-    // mutate_type(mutation_rate);
+    if (Config::enabled_shape_types_amount > 1)
+    {
+        mutate_type(mutation_rate);
+    }
+
     mutate_color(mutation_rate);
     mutate_pos(mutation_rate);
     mutate_rot(mutation_rate);
@@ -25,7 +39,7 @@ void Gene::mutate_type(float mutation_rate)
 
     if (fRand() <= mutation_rate / 2)
     {
-        typeOfShape = (shape_type)(rand() % 2);
+        typeOfShape = genType();
     }
 }
 void Gene::mutate_color(float mutation_rate)

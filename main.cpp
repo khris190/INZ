@@ -18,13 +18,13 @@ int main(int argc, char const *argv[])
     }
     if (Config::Log_to_file.value)
     {
-        Log.setFile(Config::Log_to_file_name.value, true);
+        Log.setFile(Config::OutFolderName + Config::Log_to_file_name.value, true);
         Log.setTarget(Target::LOG_FILE);
     }
     Log.LogInfo("Starting");
     if (argsParsed)
     {
-        newTimer("mainTestTimepr");
+        newTimer("mainTestTimer");
 
         artGeneration gen(Config::Population_size.value, Config::Shape_amount.value);
         cairo_surface_t *image = cairo_image_surface_create_from_png(Config::Input_name.value.c_str());

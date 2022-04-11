@@ -2,13 +2,7 @@
 #define GENE_HPP
 
 #include "DataStructures.hpp"
-
-enum shape_type{
-    rectangle,
-    ellipse
-};
-
-
+#include "../Config/Config.hpp"
 // TODO implement parametrized shapes
 struct Gene
 {
@@ -29,7 +23,6 @@ struct Gene
     void wiggle_pos(float mutation_rate = 0.001);
     void wiggle_rot(float mutation_rate = 0.001);
     void wiggle_size(float mutation_rate = 0.001);
-
 };
 
 #endif // GENE_HPP

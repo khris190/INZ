@@ -132,7 +132,7 @@ void artGeneration::StartEvolution(cairo_surface_t *img)
         if (wiggleCounter % 4 == 3)
         {
             wiggleCounter++;
-            std::cout << "WIGGLE " << std::endl;
+            Log.LogInfo("WIGGLE");
             // wiggle
             for (size_t i = 0; i < children_size; i++)
             {
@@ -173,7 +173,7 @@ void artGeneration::StartEvolution(cairo_surface_t *img)
             {
                 cairo_surface_t *temp_surface = cairo_image_surface_create(CAIRO_FORMAT_ARGB32, _width, _height);
                 this->Draw(temp_surface, this->parent1);
-                cairo_surface_write_to_png(temp_surface, Config::Output_name.value.c_str());
+                cairo_surface_write_to_png(temp_surface, Config::GetOutputFilePathAndFileName(savedBestScore).c_str());
 
                 cairo_surface_destroy(temp_surface);
             }
@@ -182,7 +182,7 @@ void artGeneration::StartEvolution(cairo_surface_t *img)
     } while (bestScore < Config::Resemblance.value);
     cairo_surface_t *temp_surface = cairo_image_surface_create(CAIRO_FORMAT_ARGB32, _width, _height);
     this->Draw(temp_surface, this->parent1);
-    cairo_surface_write_to_png(temp_surface, Config::Output_name.value.c_str());
+    cairo_surface_write_to_png(temp_surface, Config::GetOutputFilePathAndFileName(savedBestScore).c_str());
 
     cairo_surface_destroy(temp_surface);
 

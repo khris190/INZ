@@ -3,6 +3,12 @@
 
 #include <string>
 #include <typeinfo>
+#include <sys/types.h>
+#include <sys/stat.h>
+#include <unistd.h>
+#include <iostream>
+#include <fstream>
+#include <bitset>
 
 template <typename T>
 struct Argument
@@ -31,9 +37,38 @@ inline Argument<T>::Argument(T val_, std::string Regex_tag_, std::string Value_r
     
 }
 
+enum shape_type
+{
+    rectangle = 1,
+    ellipse = 2,
+    triangle = 4,
+};
+union shapes_switch
+{
+    struct bools
+    {
+        bool rectangle : 1,
+            ellipse : 1,
+            triangle : 1;
+    } bools;
+    unsigned char shapes;
+    shapes_switch(){
+        shapes = 0;
+    }
+    shapes_switch(unsigned char x){
+        shapes = x;
+    }
+};
+
 
 namespace Config
 {
+    extern std::string OutFolderName;
+    void CreateFolderForOutput();
+    std::string GetOutputFilePathAndFileName(float Resemblance);
+
+    static short shape_types_amount = 3;
+    extern short enabled_shape_types_amount;
     //io
     extern Argument<std::string> Input_name;
     extern Argument<std::string> Output_name;
@@ -43,7 +78,7 @@ namespace Config
     extern Argument<int> Thread_count;
     extern Argument<int> Population_size;
     extern Argument<int> Shape_amount;
-    extern Argument<int> Shape_types;
+    extern Argument<shapes_switch> Shape_types;
     extern Argument<float> Resemblance;
     extern Argument<float> Scale;
     extern Argument<float> Mutation;
@@ -58,6 +93,8 @@ namespace Config
     extern Argument<bool> Help;
     extern Argument<bool> Print_Vals;
     
+
+    extern shapes_switch Shapes_bools;
     
 } // namespace Config
 

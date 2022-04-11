@@ -9,14 +9,11 @@
             "args": [
                 "-i",
                 "art.png",
-                "-o",
-                "artOut.png",
                 "-t",
-                "10",
-                "-r",
-                "0.95",
-                "-v",
-                "3"
+                "1",
+                "-S",
+                "100",
+                "-L"
             ],
             "stopAtEntry": false,
             "cwd": "${workspaceFolder}/bin",

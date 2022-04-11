@@ -23,7 +23,15 @@ bool MatchAndSetArg(Argument<int> &arg, char const *argv[], int i)
     {
         if (typeid(arg.value) == typeid(int))
         {
-            arg.value = std::stoi(argv[i + 1]);
+            if (!arg.Value_regex_tag.empty())
+            {
+                if (std::regex_match(argv[i + 1], std::regex(arg.Value_regex_tag)))
+                {
+                    arg.value = std::stoi(argv[i + 1]);
+                }
+            }
+            else
+                arg.value = std::stoi(argv[i + 1]);
         }
         else
             return false;
@@ -37,7 +45,15 @@ bool MatchAndSetArg(Argument<float> &arg, char const *argv[], int i)
     {
         if (typeid(arg.value) == typeid(float))
         {
-            arg.value = std::stof(argv[i + 1]);
+            if (!arg.Value_regex_tag.empty())
+            {
+                if (std::regex_match(argv[i + 1], std::regex(arg.Value_regex_tag)))
+                {
+                    arg.value = std::stof(argv[i + 1]);
+                }
+            }
+            else
+                arg.value = std::stof(argv[i + 1]);
         }
         else
             return false;
@@ -59,6 +75,40 @@ bool MatchAndSetArg(Argument<bool> &arg, char const *argv[], int i)
     }
     return false;
 }
+bool MatchAndSetArg(Argument<shapes_switch> &arg, char const *argv[], int i)
+{
+    if (std::regex_match(argv[i], std::regex(arg.Regex_tag)))
+    {
+        if (typeid(arg.value) == typeid(shapes_switch))
+        {
+            if (!arg.Value_regex_tag.empty())
+            {
+                if (std::regex_match(argv[i + 1], std::regex(arg.Value_regex_tag)))
+                {
+                    Config::enabled_shape_types_amount = 0;
+                    arg.value = 0;
+                    int input = std::stoi(argv[i + 1]);
+                    char needle = 0;
+                    do
+                    {
+                        if (input % 10 == 1)
+                        {
+                            arg.value.shapes |= 1 << needle;
+                            Config::enabled_shape_types_amount++;
+                        }
+
+                        needle++;
+                        input /= 10;
+                    } while (input > 0);
+                }
+            }
+        }
+        else
+            return false;
+        return true;
+    }
+    return false;
+}
 
 void PrintInfos()
 {
@@ -70,7 +120,7 @@ void PrintInfos()
                   << "Thread_count: " << Config::Thread_count.value << std::endl
                   << "Population_size: " << Config::Population_size.value << std::endl
                   << "Shape_amount: " << Config::Shape_amount.value << std::endl
-                  << "Shape_types: " << Config::Shape_types.value << std::endl
+                  << "Shape_types: " << std::bitset<8>(Config::Shape_types.value.shapes) << std::endl
                   << "Resemblance: " << Config::Resemblance.value << std::endl
                   << "Scale: " << Config::Scale.value << std::endl
                   << "Mutation rate: " << Config::Mutation.value << std::endl
@@ -97,6 +147,7 @@ void PrintInfos()
     }
 }
 
+// TODO chekc if stuff after a flag is another flag or a parameter
 bool ParseMainArguments(int argc, char const *argv[])
 {
     int i;
@@ -134,5 +185,6 @@ bool ParseMainArguments(int argc, char const *argv[])
         PrintInfos();
         return false;
     }
+    Config::CreateFolderForOutput();
     return true;
 }
