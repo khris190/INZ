@@ -122,6 +122,7 @@ void PrintInfos()
                   << "Shape_amount: " << Config::Shape_amount.value << std::endl
                   << "Shape_types: " << std::bitset<8>(Config::Shape_types.value.shapes) << std::endl
                   << "Resemblance: " << Config::Resemblance.value << std::endl
+                  << "timeHours: " << Config::timeHours.value << std::endl
                   << "Scale: " << Config::Scale.value << std::endl
                   << "Mutation rate: " << Config::Mutation.value << std::endl
                   << "Verbose: " << Config::Verbose.value << std::endl
@@ -140,6 +141,7 @@ void PrintInfos()
                   << " -s --shapes-amount   <int> Amount of generated shapes  " << std::endl
                   << " -S --shape-types     <int> Types of generated types in binary  10 - ellipses 1 - squares   " << std::endl
                   << " -r --resemblance     <float> % Resemblance of source image at which the program will exit" << std::endl
+                  << " --hours              <float> hours after which the program will call it a day" << std::endl
                   << " --scale              <float> % scale of shapes 1 means a shape can take the whole canvas" << std::endl
                   << " -m --mutation        <float> % chance of mutation" << std::endl
                   << " -v --verbose         <int>(optional) print info during program runtime" << std::endl
@@ -161,6 +163,7 @@ bool ParseMainArguments(int argc, char const *argv[])
         MatchAndSetArg(Config::Shape_amount, argv, i);
         MatchAndSetArg(Config::Shape_types, argv, i);
         MatchAndSetArg(Config::Resemblance, argv, i);
+        MatchAndSetArg(Config::timeHours, argv, i);
         MatchAndSetArg(Config::Scale, argv, i);
         MatchAndSetArg(Config::Mutation, argv, i);
 

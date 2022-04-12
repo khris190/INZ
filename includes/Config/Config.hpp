@@ -83,6 +83,7 @@ namespace Config
     extern Argument<int> Shape_amount;
     extern Argument<shapes_switch> Shape_types;
     extern Argument<float> Resemblance;
+    extern Argument<float> timeHours;
     extern Argument<float> Scale;
     extern Argument<float> Mutation;
 

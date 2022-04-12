@@ -42,6 +42,11 @@ namespace Config
     //    -r --resemblance      <float>
     Argument<float> Resemblance(0.f, "(^\\-r$)|(^\\-\\-resemblance$)", floatRegex);
 
+
+    // hours after which the program will call it a day
+    //    --hours      <float>
+    Argument<float> timeHours(1.f, "|(^\\-\\-hours$)", floatRegex);
+
     // % scale of shapes 1 means a shape can take the whole canvas
     //    --scale               <float>
     Argument<float> Scale(0.5f, "(^\\-\\-scale$)", floatRegex);
@@ -78,7 +83,7 @@ namespace Config
     std::time_t startTime;
 
     bool doStop(int SecondsAfterToStop){
-        return (time(nullptr) - startTime) > SecondsAfterToStop;
+        return (time(nullptr) - startTime) > (int)(3600 * Config::timeHours.value);
     }
 
 
@@ -99,6 +104,7 @@ namespace Config
                   << "Shape_amount: " << Config::Shape_amount.value << std::endl
                   << "Shape_types: " << std::bitset<8>(Config::Shape_types.value.shapes) << std::endl
                   << "Resemblance: " << Config::Resemblance.value << std::endl
+                  << "timeHours: " << Config::timeHours.value << std::endl
                   << "Scale: " << Config::Scale.value << std::endl
                   << "Mutation rate: " << Config::Mutation.value << std::endl
                   << "Verbose: " << Config::Verbose.value << std::endl
