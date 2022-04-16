@@ -15,16 +15,52 @@ void artGeneration::Draw(cairo_surface_t *img, size_t index)
     this->children[index]->Draw(img, Config::Scale.value);
 }
 
+//TODO: clean
 // no need for safety if there is nothing unsafe
 // TODO change those stupid double pointers for values that are next to each other wtf was i thinking? was it more readable or sth?
-void asyncFitness(cairo_surface_t *img, Genotype **children, int *Best1, int *Best2, float *BestScore1, float *BestScore2, int start, int stop, int _width, int _height)
+// void asyncFitness(cairo_surface_t *img, Genotype **children, int *Best1, int *Best2, float *BestScore1, float *BestScore2, int start, int stop, int _width, int _height)
+// {
+//     *Best1 = -1;
+//     *Best2 = -1;
+//     float bestScore = 0;
+//     float bestScore2 = 0;
+//     *BestScore1 = 0;
+//     *BestScore2 = 0;
+//     for (size_t i = start; i < stop; i++)
+//     {
+//         cairo_surface_t *temp_surface = cairo_image_surface_create(CAIRO_FORMAT_ARGB32, _width, _height);
+//         {
+//             children[i]->Draw(temp_surface);
+//         }
+//         float score = fitness(img, temp_surface);
+//         if (bestScore < score)
+//         {
+//             bestScore2 = bestScore;
+//             bestScore = score;
+//             *BestScore2 = *BestScore1;
+//             *BestScore1 = bestScore;
+//             *Best2 = *Best1;
+//             *Best1 = i;
+//         }
+//         else if (bestScore2 < score)
+//         {
+//             bestScore2 = score;
+//             *BestScore2 = bestScore2;
+//             *Best2 = i;
+//         }
+
+//         cairo_surface_destroy(temp_surface);
+//     }
+// }
+
+void asyncFitness(cairo_surface_t *img, Genotype **children, int *Bests, float *BestScores, int start, int stop, int _width, int _height)
 {
-    *Best1 = -1;
-    *Best2 = -1;
+    Bests[0] = -1;
+    Bests[1] = -1;
     float bestScore = 0;
     float bestScore2 = 0;
-    *BestScore1 = 0;
-    *BestScore2 = 0;
+    BestScores[0] = 0;
+    BestScores[1] = 0;
     for (size_t i = start; i < stop; i++)
     {
         cairo_surface_t *temp_surface = cairo_image_surface_create(CAIRO_FORMAT_ARGB32, _width, _height);
@@ -36,16 +72,16 @@ void asyncFitness(cairo_surface_t *img, Genotype **children, int *Best1, int *Be
         {
             bestScore2 = bestScore;
             bestScore = score;
-            *BestScore2 = *BestScore1;
-            *BestScore1 = bestScore;
-            *Best2 = *Best1;
-            *Best1 = i;
+            BestScores[1] = BestScores[0];
+            BestScores[0] = bestScore;
+            Bests[1] = Bests[0];
+            Bests[0] = i;
         }
         else if (bestScore2 < score)
         {
             bestScore2 = score;
-            *BestScore2 = bestScore2;
-            *Best2 = i;
+            BestScores[1] = bestScore2;
+            Bests[1] = i;
         }
 
         cairo_surface_destroy(temp_surface);
@@ -81,10 +117,17 @@ void artGeneration::StartEvolution(cairo_surface_t *img)
             int offset = this->children_size / ThreadCount;
             for (size_t i = 0; i < ThreadCount; i++)
             {
+                // workers.push_back(
+                //     std::thread(asyncFitness, img, this->children,
+                //                 best + (i * 2), best + (i * 2) + 1,
+                //                 bestScores + (i * 2), bestScores + (i * 2) + 1,
+                //                 offset * i, offset * (i + 1),
+                //                 _width, _height));
+
                 workers.push_back(
                     std::thread(asyncFitness, img, this->children,
-                                best + (i * 2), best + (i * 2 + 1),
-                                bestScores + (i * 2), bestScores + (i * 2 + 1),
+                                best + (i * 2),
+                                bestScores + (i * 2),
                                 offset * i, offset * (i + 1),
                                 _width, _height));
             }
