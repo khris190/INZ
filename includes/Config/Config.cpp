@@ -61,7 +61,7 @@ namespace Config
 
     //  print info during program runtime
     //    -v --verbose
-    Argument<int> Verbose_level(2, "(^\\-v$)|(^\\-\\-verbose$)", "^[0-8]$");
+    Argument<int> Verbose_level(2, "(^\\-v$)|(^\\-\\-verbose$)", "^(?!-)[0-8]$");
 
     // print Logs to "Log.log" (best used with verbose)
     //    -L --log-to-file
@@ -69,7 +69,7 @@ namespace Config
 
     // name of file Log will be saved to
     //    -L --log-to-file      <file>(optional) name of file Log will be saved to
-    Argument<std::string> Log_to_file_name("Log.log", "(^\\-L$)|(^\\-\\-log-to-file$)", "^[\\w\\s\\d\\-.,]+");
+    Argument<std::string> Log_to_file_name("Log.log", "(^\\-L$)|(^\\-\\-log-to-file$)", "^(?!-)[\\w\\s\\d\\-.,]+");
 
     // Print help
     //    -h --help
