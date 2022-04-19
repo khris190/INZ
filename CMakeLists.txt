@@ -35,8 +35,8 @@ file(GLOB SOURCES
 #    includes/*/*.cpp
 #    includes/*.hpp
 #    includes/*.cpp
-    includes/*.*
-    includes/**/*.*
+    include/*.*
+    include/**/*.*
 )
 #file(GLOB SOURCES_DIRS
 #    includes/**/[!.]

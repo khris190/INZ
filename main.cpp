@@ -1,9 +1,9 @@
 
 #include <stdio.h>
-#include "includes/Util/Logger.hpp"
-#include "includes/Util/Profiler.hpp"
-#include "artGeneration.hpp"
-#include "Config/ArgsParser.hpp"
+#include "include/Util/Logger.hpp"
+#include "include/Util/Profiler.hpp"
+#include "include/artGeneration.hpp"
+#include "include/Config/ArgsParser.hpp"
 
 // TODO check the whole programm for Logs;
 int main(int argc, char const *argv[])
