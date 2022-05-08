@@ -87,12 +87,13 @@ void artGeneration::StartEvolution(cairo_surface_t *img)
             int offset = this->children_size / ThreadCount;
             for (size_t i = 0; i < ThreadCount; i++)
             {
-                workers.push_back(
-                    std::thread(asyncFitness, img, this->children,
-                                best + (i * 2),
-                                bestScores + (i * 2),
-                                offset * i, offset * (i + 1),
-                                _width, _height));
+                // workers.push_back(
+                //     std::thread(asyncFitness, img, this->children,
+                //                 best + (i * 2),
+                //                 bestScores + (i * 2),
+                //                 offset * i, offset * (i + 1),
+                //                 _width, _height));
+                asyncFitness(img, this->children,best + (i * 2),bestScores + (i * 2),offset * i, offset * (i + 1),_width, _height);
             }
             for (std::thread &t : workers)
             {

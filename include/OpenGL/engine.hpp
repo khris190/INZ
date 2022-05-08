@@ -23,24 +23,20 @@ extern GLuint shaderProgram; // identyfikator programu cieniowania
 extern GLuint vertexLoc; // lokalizacja atrybutu wierzcholka - wspolrzedne
 extern GLuint colorLoc;  // lokalizacja atrybutu wierzcholka - kolor
 
-extern std::array<GLuint, 2> vao;	   // identyfikatory obiektow VAO
-extern std::array<GLuint, 3> buffers; // identyfikatory obiektow VBO
 
 extern GLFWwindow *window;
 
 //******************************************************************************************
 
-void initEngine();
+void initEngine(int width = WIN_WIDTH, int height = WIN_HEIGHT);
 void draw();
 void errorCallback(int error, const char *description);
 void keyCallback(GLFWwindow *window, int key, int scancode, int action, int mods);
-void cleanup();
 void initGL();
-void setupShaders();
-void setupBuffers();
 void renderScene();
+void setupShaders();
 void initGLEW();
-void initGLFW();
+void initGLFW(int width = WIN_WIDTH, int height = WIN_HEIGHT);
 
 void setPositionsAndColors();
 

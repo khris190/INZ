@@ -8,6 +8,11 @@
 #include "Randoms.hpp"
 
 
+#include <vector>
+#include "../OpenGL/Drawers/mesh.hpp"
+#include "../OpenGL/engine.hpp"
+
+
 struct Genotype
 {
     int size;

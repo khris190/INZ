@@ -5,9 +5,16 @@
 #include "include/artGeneration.hpp"
 #include "include/Config/ArgsParser.hpp"
 
+
+//engine
+#include "include/OpenGL/engine.hpp"
+
 // TODO check the whole programm for Logs;
 int main(int argc, char const *argv[])
 {
+
+
+
     bool argsParsed = ParseMainArguments(argc, argv);
     Log.setTarget(Target::DISABLED);
     Log.setLevel((Level)Config::Verbose_level.value);
@@ -33,5 +40,7 @@ int main(int argc, char const *argv[])
         cairo_surface_destroy(image);
     }
     Log.LogDeb(Profiler::getInstance()->getTimingsAsString());
+
+
     return 0;
 }

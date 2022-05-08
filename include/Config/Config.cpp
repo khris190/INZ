@@ -12,7 +12,7 @@ namespace Config
     short enabled_shape_types_amount = 1;
     // Iutput image fileName
     //    -i --iutput           <file.png>
-    Argument<std::string> Input_name("test.png", "(^\\-i$)|(^\\-\\-input$)", "(^[\\w\\s\\d\\-/.,]+\\.png$)");
+    Argument<std::string> Input_name("art.png", "(^\\-i$)|(^\\-\\-input$)", "(^[\\w\\s\\d\\-/.,]+\\.png$)");
 
     // Output image fileName
     //    -o --output           <file.png>
@@ -28,7 +28,7 @@ namespace Config
 
     // Amount of generated shapes
     //    -s --shapes-amount    <int>
-    Argument<int> Shape_amount(64, "(^\\-s$)|(^\\-\\-shapes\\-amount$)", intRegex);
+    Argument<int> Shape_amount(4, "(^\\-s$)|(^\\-\\-shapes\\-amount$)", intRegex);
 
     // Types of generated types in binary
     // 100 - triangles
@@ -36,7 +36,7 @@ namespace Config
     // 1 - squares
     //    -S --shape-types      <int>
     // TODO implement Argument<int> Shape_types
-    Argument<shapes_switch> Shape_types(0b010, "(^\\-S$)|(^\\-\\-shape\\-types$)", binaryRegex);
+    Argument<shapes_switch> Shape_types(0b001, "(^\\-S$)|(^\\-\\-shape\\-types$)", binaryRegex);
 
     // % Resemblance of source image at which the program will exit
     //    -r --resemblance      <float>

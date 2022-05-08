@@ -13,15 +13,15 @@ Genotype::Genotype(int size_)
 void Genotype::Swap_random(float mutation_rate)
 {
     for (size_t i = 0; i < size; i++)
-    {   
+    {
         if (fRand() <= mutation_rate / 10)
         {
-            int swap = rand()% size;
+            int swap = rand() % size;
             while (swap == i)
             {
-                swap = rand()% size;
+                swap = rand() % size;
             }
-            
+
             Gene tmp = GeneArr[i];
             GeneArr[i] = GeneArr[swap];
             GeneArr[swap] = tmp;
@@ -76,9 +76,8 @@ void Genotype::cross(Genotype *parent1_, Genotype *parent2_, float mutation_rate
                 this->GeneArr[i] = parent2_->GeneArr[i];
             }
         }
-
     }
-        this->mutate(mutation_rate);
+    this->mutate(mutation_rate);
 }
 
 inline position_2D rotate(float x, float y, float angle)
@@ -88,20 +87,19 @@ inline position_2D rotate(float x, float y, float angle)
 
 void Genotype::Draw(cairo_surface_t *img, float Scale)
 {
-    cairo_t *cr;
+    std::vector<float> Verticies = std::vector<float>();
+
+    int _width, _height;
+
+    _width = cairo_image_surface_get_width(img);
+    _height = cairo_image_surface_get_height(img);
+    // engine
+    engine::initEngine(_width, _height);
+
     for (size_t i = 0; i < size; i++)
     {
-        int _width, _height;
-
-        _width = cairo_image_surface_get_width(img);
-        _height = cairo_image_surface_get_height(img);
-
-#pragma GCC diagnostic push
-#pragma GCC diagnostic ignored "-Wnarrowing"
 
         float color[4] = {GeneArr[i].color.r, GeneArr[i].color.g, GeneArr[i].color.b, GeneArr[i].color.a};
-
-#pragma GCC diagnostic pop
 
         int x = GeneArr[i].position.x * _width;
         int y = GeneArr[i].position.y * _height;
@@ -113,8 +111,6 @@ void Genotype::Draw(cairo_surface_t *img, float Scale)
         // kwadrat
         if (GeneArr[i].typeOfShape == rectangle)
         {
-            cr = cairo_create(img);
-            cairo_set_source_rgba(cr, color[0], color[1], color[2], color[3]);
             position_2D p1, p2, p3, p4;
             if (rotation != 0)
             {
@@ -128,27 +124,27 @@ void Genotype::Draw(cairo_surface_t *img, float Scale)
             p3.move(x, y);
             p4.move(x, y);
 
-            cairo_move_to(cr, p1.x, p1.y);
-            cairo_line_to(cr, p2.x, p2.y);
-            cairo_line_to(cr, p4.x, p4.y);
-            cairo_line_to(cr, p3.x, p3.y);
-            cairo_close_path(cr);
-            cairo_fill(cr);
+            // engine
+
+            Verticies.insert(Verticies.end(), {(p1.x / (_width / 2)) - 1, ((p1.y / (_height / 2)) - 1) * -1, 1.f, 1.f});
+            Verticies.insert(Verticies.end(), color, color + 4);
+            Verticies.insert(Verticies.end(), {(p2.x / (_width / 2)) - 1, ((p2.y / (_height / 2)) - 1) * -1, 1.f, 1.f});
+            Verticies.insert(Verticies.end(), color, color + 4);
+            Verticies.insert(Verticies.end(), {(p4.x / (_width / 2)) - 1, ((p4.y / (_height / 2)) - 1) * -1, 1.f, 1.f});
+            Verticies.insert(Verticies.end(), color, color + 4);
+            Verticies.insert(Verticies.end(), {(p1.x / (_width / 2)) - 1, ((p1.y / (_height / 2)) - 1) * -1, 1.f, 1.f});
+            Verticies.insert(Verticies.end(), color, color + 4);
+            Verticies.insert(Verticies.end(), {(p4.x / (_width / 2)) - 1, ((p4.y / (_height / 2)) - 1) * -1, 1.f, 1.f});
+            Verticies.insert(Verticies.end(), color, color + 4);
+            Verticies.insert(Verticies.end(), {(p3.x / (_width / 2)) - 1, ((p3.y / (_height / 2)) - 1) * -1, 1.f, 1.f});
+            Verticies.insert(Verticies.end(), color, color + 4);
+
         }
         else if (GeneArr[i].typeOfShape == ellipse)
         {
-            cr = cairo_create(img);
-            cairo_set_source_rgba(cr, color[0], color[1], color[2], color[3]);
-            cairo_translate(cr, x, y);
-            cairo_rotate(cr, rotation * 3.14);
-            cairo_scale(cr, scaleX, scaleY);
-            cairo_arc(cr, 0, 0, 1, 0, 2 * 3.14);
-            cairo_fill(cr);
         }
         else if (GeneArr[i].typeOfShape == triangle)
         {
-            cr = cairo_create(img);
-            cairo_set_source_rgba(cr, color[0], color[1], color[2], color[3]);
             position_2D p1, p2;
             if (rotation != 0)
             {
@@ -158,15 +154,23 @@ void Genotype::Draw(cairo_surface_t *img, float Scale)
             p1.move(x, y);
             p2.move(x, y);
 
-            cairo_move_to(cr, x, y);
-            cairo_line_to(cr, p1.x, p1.y);
-            cairo_line_to(cr, p2.x, p2.y);
-            cairo_close_path(cr);
-            cairo_fill(cr);
         }
-
-        cairo_destroy(cr);
     }
+    mesh::addVao(Verticies, engine::shaderProgram, GL_TRIANGLES);
+    while (!glfwWindowShouldClose(engine::window))
+    {
+        engine::renderScene();
+        mesh::drawVAO();
+
+        glBindVertexArray(0);
+        glfwSwapBuffers(engine::window); // zamieniamy bufory
+        glfwPollEvents();                // przetwarzanie zdarzen
+    }
+
+    //glReadPixels
+    //engine
+	glfwDestroyWindow(engine::window); // niszczy okno i jego kontekst
+	glfwTerminate();
 }
 
 Genotype::~Genotype()
