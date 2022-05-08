@@ -24,6 +24,7 @@ void artGeneration::Draw(cairo_surface_t *img, size_t index)
 
 void asyncFitness(cairo_surface_t *img, Genotype **children, int *Bests, float *BestScores, int start, int stop, int _width, int _height)
 {
+    newTimer("fitness");
     Bests[0] = -1;
     Bests[1] = -1;
     float bestScore = 0;

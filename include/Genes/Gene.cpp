@@ -16,10 +16,10 @@ shape_type genType()
 void Gene::createRandom()
 {
     typeOfShape = genType();
-    position = position_2D(fRand(), fRand());
+    position = myData::position_2D(fRand(), fRand());
     rotation = fRand();
-    scale = float2(fRand(), fRand());
-    color = color_RGBA(fRand(), fRand(), fRand(), fRand());
+    scale = myData::float2(fRand(), fRand());
+    color = myData::color_RGBA(fRand(), fRand(), fRand(), fRand());
 }
 
 void Gene::mutate(float mutation_rate)
@@ -46,14 +46,14 @@ void Gene::mutate_color(float mutation_rate)
 {
     if (fRand() <= mutation_rate)
     {
-        color = color_RGBA(fRand(), fRand(), fRand(), fRand());
+        color = myData::color_RGBA(fRand(), fRand(), fRand(), fRand());
     }
 }
 void Gene::mutate_pos(float mutation_rate)
 {
     if (fRand() <= mutation_rate)
     {
-        position = position_2D(fRand(), fRand());
+        position = myData::position_2D(fRand(), fRand());
     }
 }
 void Gene::mutate_rot(float mutation_rate)
@@ -67,7 +67,7 @@ void Gene::mutate_size(float mutation_rate)
 {
     if (fRand() <= mutation_rate)
     {
-        scale = float2(fRand(), fRand());
+        scale = myData::float2(fRand(), fRand());
     }
 }
 

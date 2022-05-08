@@ -81,9 +81,9 @@ void Genotype::cross(Genotype *parent1_, Genotype *parent2_, float mutation_rate
         this->mutate(mutation_rate);
 }
 
-inline position_2D rotate(float x, float y, float angle)
+inline myData::position_2D rotate(float x, float y, float angle)
 {
-    return position_2D(x * cos(angle) - y * sin(angle), x * sin(angle) + y * cos(angle));
+    return myData::position_2D(x * cos(angle) - y * sin(angle), x * sin(angle) + y * cos(angle));
 }
 
 void Genotype::Draw(cairo_surface_t *img, float Scale)
@@ -115,7 +115,7 @@ void Genotype::Draw(cairo_surface_t *img, float Scale)
         {
             cr = cairo_create(img);
             cairo_set_source_rgba(cr, color[0], color[1], color[2], color[3]);
-            position_2D p1, p2, p3, p4;
+            myData::position_2D p1, p2, p3, p4;
             if (rotation != 0)
             {
                 p1 = rotate(scaleX, scaleY, rotation);
@@ -149,7 +149,7 @@ void Genotype::Draw(cairo_surface_t *img, float Scale)
         {
             cr = cairo_create(img);
             cairo_set_source_rgba(cr, color[0], color[1], color[2], color[3]);
-            position_2D p1, p2;
+            myData::position_2D p1, p2;
             if (rotation != 0)
             {
                 p1 = rotate(scaleX, scaleY, rotation * 2);

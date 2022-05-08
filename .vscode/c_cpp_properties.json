@@ -4,9 +4,9 @@
             "name": "Linux",
             "includePath": [
                 "${workspaceFolder}/**",
-                "${workspaceFolder}/includes/**",
-                "${workspaceFolder}/includes",
-                "${workspaceFolder}/includes"
+                "${workspaceFolder}/include/**",
+                "${workspaceFolder}/include",
+                "/opt/cuda/targets/x86_64-linux/include"
             ],
             "defines": [],
             "compilerPath": "/bin/g++",

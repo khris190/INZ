@@ -1,5 +1,8 @@
 #include "DataStructures.hpp"
 
+namespace myData
+{
+
 float2::float2(float x_, float y_)
     : x(x_),
       y(y_)
@@ -51,4 +54,5 @@ color_RGB::color_RGB(float r_, float g_, float b_)
       b(b_)
 {
     
+}
 }

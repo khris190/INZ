@@ -12,6 +12,7 @@
 #include <iomanip>
 #include <memory>
 #include <source_location>
+#include <experimental/source_location>
 
 #include "Profiler.hpp"
 
@@ -139,7 +140,7 @@ public:
      *
      * \param	string	The file to which we will Logger
      */
-    short setFile(string fileName, bool deleteFile = false, const std::source_location location = std::source_location::current())
+    short setFile(string fileName, bool deleteFile = false, const std::experimental::source_location location = std::experimental::source_location::current())
     {
         if (this->LoggingStream.is_open())
         {
@@ -160,7 +161,7 @@ public:
         this->LoggerFile = fileName;
         return 0;
     }
-    short setFile(string fileName, ofstream::openmode mode, bool deleteFile = false, const std::source_location location = std::source_location::current())
+    short setFile(string fileName, ofstream::openmode mode, bool deleteFile = false, const std::experimental::source_location location = std::experimental::source_location::current())
     {
         if (this->LoggingStream.is_open())
         {
@@ -188,7 +189,7 @@ public:
      * \param	Level	The severity of the message
      * \param	string	The message to write
      */
-    void write(Level level, string message, const std::source_location location)
+    void write(Level level, string message, const std::experimental::source_location location)
     {
         // Only log if we're at or above the pre-defined severity
         if (level < this->LoggerLevel)
@@ -239,7 +240,7 @@ public:
         }
     }
 
-    std::string getLoggerfunctionInfo(Level level, const std::source_location location)
+    std::string getLoggerfunctionInfo(Level level, const std::experimental::source_location location)
     {
         string toLogger;
 
@@ -293,7 +294,7 @@ public:
      *
      * \param	string	The message to write
      */
-    void LogDeb(string message, const std::source_location location = std::source_location::current())
+    void LogDeb(string message, const std::experimental::source_location location = std::experimental::source_location::current())
     {
         this->write(Level::DEB, message, location);
     }
@@ -301,7 +302,7 @@ public:
      *
      * \param	string	The message to write
      */
-    void LogInfo(string message, const std::source_location location = std::source_location::current())
+    void LogInfo(string message, const std::experimental::source_location location = std::experimental::source_location::current())
     {
         this->write(Level::INFO, message, location);
     }
@@ -309,7 +310,7 @@ public:
      *
      * \param	string	The message to write
      */
-    void LogNotice(string message, const std::source_location location = std::source_location::current())
+    void LogNotice(string message, const std::experimental::source_location location = std::experimental::source_location::current())
     {
         this->write(Level::NOTICE, message, location);
     }
@@ -317,7 +318,7 @@ public:
      *
      * \param	string	The message to write
      */
-    void LogWar(string message, const std::source_location location = std::source_location::current())
+    void LogWar(string message, const std::experimental::source_location location = std::experimental::source_location::current())
     {
         this->write(Level::WARNING, message, location);
     }
@@ -325,7 +326,7 @@ public:
      *
      * \param	string	The message to write
      */
-    void LogErr(string message, const std::source_location location = std::source_location::current())
+    void LogErr(string message, const std::experimental::source_location location = std::experimental::source_location::current())
     {
         this->write(Level::ERR, message, location);
     }
@@ -333,7 +334,7 @@ public:
      *
      * \param	string	The message to write
      */
-    void LogCrit(string message, const std::source_location location = std::source_location::current())
+    void LogCrit(string message, const std::experimental::source_location location = std::experimental::source_location::current())
     {
         this->write(Level::CRIT, message, location);
     }
@@ -341,7 +342,7 @@ public:
      *
      * \param	string	The message to write
      */
-    void LogAlert(string message, const std::source_location location = std::source_location::current())
+    void LogAlert(string message, const std::experimental::source_location location = std::experimental::source_location::current())
     {
         this->write(Level::ALERT, message, location);
     }
@@ -349,7 +350,7 @@ public:
      *
      * \param	string	The message to write
      */
-    void LogEmerg(string message, const std::source_location location = std::source_location::current())
+    void LogEmerg(string message, const std::experimental::source_location location = std::experimental::source_location::current())
     {
         this->write(Level::EMERG, message, location);
     }

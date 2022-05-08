@@ -7,10 +7,10 @@
 struct Gene
 {
     shape_type typeOfShape;
-    position_2D position;
+    myData::position_2D position;
     float rotation;
-    float2 scale;
-    color_RGBA color;
+    myData::float2 scale;
+    myData::color_RGBA color;
     void createRandom();
     void mutate(float mutation_rate = 0.001);
     void mutate_type(float mutation_rate = 0.001);

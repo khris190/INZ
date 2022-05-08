@@ -4,6 +4,9 @@
 
 #pragma region floats
 
+namespace myData
+{
+
 struct float2
 {
     float x, y;
@@ -38,6 +41,8 @@ struct color_RGB
     color_RGB(float r_ = 0, float g_ = 0, float b_ = 0);
 };
 
+    
+} // namespace myData
 
 #pragma endregion floats
 

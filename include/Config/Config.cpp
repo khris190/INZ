@@ -12,7 +12,7 @@ namespace Config
     short enabled_shape_types_amount = 1;
     // Iutput image fileName
     //    -i --iutput           <file.png>
-    Argument<std::string> Input_name("test.png", "(^\\-i$)|(^\\-\\-input$)", "(^[\\w\\s\\d\\-/.,]+\\.png$)");
+    Argument<std::string> Input_name("art.png", "(^\\-i$)|(^\\-\\-input$)", "(^[\\w\\s\\d\\-/.,]+\\.png$)");
 
     // Output image fileName
     //    -o --output           <file.png>
@@ -24,7 +24,7 @@ namespace Config
 
     // Size of population
     //    -p --population       <int>
-    Argument<int> Population_size(128, "(^\\-p$)|(^\\-\\-population$)", intRegex);
+    Argument<int> Population_size(1, "(^\\-p$)|(^\\-\\-population$)", intRegex);
 
     // Amount of generated shapes
     //    -s --shapes-amount    <int>
