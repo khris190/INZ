@@ -86,6 +86,7 @@ inline myData::position_2D rotate(float x, float y, float angle)
     return myData::position_2D(x * cos(angle) - y * sin(angle), x * sin(angle) + y * cos(angle));
 }
 
+//TODO use opengl probably
 void Genotype::Draw(cairo_surface_t *img, float Scale)
 {
     cairo_t *cr;

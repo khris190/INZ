@@ -23,7 +23,6 @@ float fitness(cairo_surface_t *img, cairo_surface_t *surface)
     _width = cairo_image_surface_get_width(img);
     _height = cairo_image_surface_get_height(img);
 
-    newTimer("calculateFitness");
     //TODO tests
     return calculateFitness(img_data, surface_data, _width, _height);
     // int temp_offset;

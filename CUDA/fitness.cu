@@ -41,7 +41,6 @@ float calculateFitness(unsigned char *img_data, unsigned char *surface_data, int
     int temp_offset;
     float row_fitness = 0;
     {
-        newTimer("sumUpFitness");
         for (size_t y = 0; y < _height; y++)
         {
             for (size_t x = 0; x < _width; x++)
