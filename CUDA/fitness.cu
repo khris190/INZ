@@ -16,21 +16,25 @@ __global__ void fitness_v1_RGBA2(int n, int width, unsigned char *pA, unsigned c
     }
 }
 
+unsigned char *x = nullptr;
+float *ret = nullptr;
 
 float calculateFitness(unsigned char *img_data, unsigned char *surface_data, int _width, int _height){
 
-    unsigned char *x, *y;
-    float *ret;
+    unsigned char *y;
     // Allocate Unified Memory – accessible from CPU or GPU
     int size = _width * _height;
 
-
-    cudaMallocManaged(&x, 4 * size *sizeof(unsigned char));
+    if(x == nullptr) {
+        cudaMallocManaged(&x, 4 * size *sizeof(unsigned char));
+        cudaMemcpy(x, img_data, 4 * _width * _height, cudaMemcpyDefault);
+    }
+    if(ret == nullptr){
+        cudaMallocManaged(&ret, size *sizeof(float));
+    }
     cudaMallocManaged(&y, 4 * size *sizeof(unsigned char));
-    cudaMallocManaged(&ret, size *sizeof(float));
     
     
-    cudaMemcpy(x, img_data, 4 * _width * _height, cudaMemcpyDefault);
     cudaMemcpy(y, surface_data, 4 * _width * _height, cudaMemcpyDefault);
 
 
@@ -56,8 +60,8 @@ float calculateFitness(unsigned char *img_data, unsigned char *surface_data, int
     }
 
     // Free memory
-    cudaFree(x);
+    //cudaFree(x);
     cudaFree(y);
-    cudaFree(ret);
+    //cudaFree(ret);
     return (result);
 }
