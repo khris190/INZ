@@ -13,21 +13,19 @@ Profiler *Profiler::getInstance()
 
 void Profiler::AddSample(Sample sample)
 {
-    bool foundSample = false;
-
+    //it will make stuff slower but now there is 0% probability to do a double push_back;
+    mxSamples.lock();  
     for (size_t i = 0; i < samples.size(); i++)
     {
         if (sample.name == samples[i].name)
-        {
+        { 
             samples[i].nsTime += sample.nsTime;
-            foundSample = true;
-            break;
+            mxSamples.unlock();
+            return;
         }
     }
-    if (!foundSample)
-    {
-        samples.push_back(sample);
-    }
+    samples.push_back(sample);
+    mxSamples.unlock();
 }
 
 std::string Profiler::getTimingsAsString(bool doClearSamples)
@@ -36,23 +34,27 @@ std::string Profiler::getTimingsAsString(bool doClearSamples)
 #ifdef DEBUG
     retString += "DEBUG TIMINGS!!!\n";
 #endif
-    for (size_t i = 0; i < samples.size(); i++)
+
+    std::vector<Sample> localSamples = getTimings(doClearSamples);
+    long time = 0;
+    for (size_t i = 0; i < localSamples.size(); i++)
     {
-        retString += samples[i].name + ": ";
-        retString += std::to_string(samples[i].nsTime) + "ns.  ";
-        if (samples[i].nsTime > 1000000)
+        mxSamples.lock();
+        retString += localSamples[i].name + ": ";
+        time = localSamples[i].nsTime;
+        mxSamples.unlock();
+        retString += std::to_string(time) + "ns.  ";
+        time /= 1000000; //change to ms.
+        if (time > 1)
         {
-            retString += std::to_string(samples[i].nsTime / 1000000) + "ms.  ";
-            if (samples[i].nsTime > 1000000000)
+            retString += std::to_string(time) + "ms.  ";
+            time /= 1000; //change to s.
+            if (time > 1)
             {
-                retString += std::to_string(samples[i].nsTime / 1000000000) + "s.";
+                retString += std::to_string(time) + "s.";
             }
         }
         retString += "\n";
-    }
-    if (doClearSamples)
-    {
-        clearSamples();
     }
     return retString;
 }
@@ -61,10 +63,12 @@ std::vector<Sample> Profiler::getTimings(bool doClearSamples)
 {
     std::vector<Sample> retSample;
 
+    mxSamples.lock();
     for (size_t i = 0; i < samples.size(); i++)
     {
         retSample.push_back(Sample(samples[i].name, samples[i].nsTime));
     }
+    mxSamples.unlock();
     if (doClearSamples)
     {
         clearSamples();
@@ -75,7 +79,9 @@ std::vector<Sample> Profiler::getTimings(bool doClearSamples)
 
 void Profiler::clearSamples()
 {
+    mxSamples.lock();
     samples.clear();
+    mxSamples.unlock();
 }
 
 void Profiler::printProfilerData(bool doClearSamples)

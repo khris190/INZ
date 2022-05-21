@@ -135,6 +135,11 @@ void artGeneration::StartEvolution(cairo_surface_t *img)
                 }
             }
         }
+        if (0 > parent1 || 0 > parent2)
+        {
+            Log.LogEmerg("wtf, parent1 or parent2 wasnt selected");
+        }
+        
         if (wiggleCounter % 4 == 3)
         {
             wiggleCounter++;

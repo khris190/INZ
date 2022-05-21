@@ -7,6 +7,7 @@
 #include <fstream>
 #include <stdio.h>
 #include <map>
+#include <mutex>
 #include <ctime>
 #include <chrono>
 #include <iomanip>
@@ -27,6 +28,9 @@ using std::chrono::system_clock;
 
 size_t cpyChar(char *dest, const char *src);
 size_t cpyChar(char *dest, unsigned int src);
+
+
+extern std::mutex mxLog;
 
 enum class Target : short
 {
@@ -224,19 +228,23 @@ public:
         // Logger to stdout if it's one of our targets
         if ((this->LoggerTarget & (short)Target::STDOUT))
         {
-            printf(toLogger.c_str());
+            fprintf(stdout, toLogger.c_str());
         }
 
         // Logger to stderr if it's one of our targets
         if ((this->LoggerTarget & (short)Target::STDERR))
         {
+            mxLog.lock();
             fprintf(stderr, toLogger.c_str());
+            mxLog.unlock();
         }
 
         // Logger to a file if it's one of our targets and we've set a LoggerFile
         if ((this->LoggerTarget & (short)Target::LOG_FILE) && this->LoggerFile != "")
         {
+            mxLog.lock();
             this->LoggingStream << toLogger;
+            mxLog.unlock();
         }
     }
 

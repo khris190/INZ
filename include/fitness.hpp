@@ -6,6 +6,7 @@
 //#include "CImg.h"
 #include <cairo/cairo.h>
 #include "Util/Profiler.hpp"
+#include "Util/Logger.hpp"
 
 //float3 test;
 

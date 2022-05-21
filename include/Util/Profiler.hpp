@@ -7,6 +7,7 @@
 #include <sys/time.h>
 #include <ctime>
 #include <iostream>
+#include <mutex>
 
 
 struct Sample
@@ -28,6 +29,7 @@ struct Sample
 class Profiler
 {
 private:
+    std::mutex mxSamples;
     std::vector<Sample> samples;
     static Profiler *profiler;
 
@@ -48,7 +50,6 @@ public:
     void clearSamples();
     void printProfilerData(bool doClearSamples = true);
 };
-
 
 
 #define TOKENPASTE(x, y) x##y

@@ -12,7 +12,7 @@ namespace Config
     short enabled_shape_types_amount = 1;
     // Iutput image fileName
     //    -i --iutput           <file.png>
-    Argument<std::string> Input_name("art.png", "(^\\-i$)|(^\\-\\-input$)", "(^[\\w\\s\\d\\-/.,]+\\.png$)");
+    Argument<std::string> Input_name("paulzcezanecrop.png", "(^\\-i$)|(^\\-\\-input$)", "(^[\\w\\s\\d\\-/.,]+\\.png$)");
 
     // Output image fileName
     //    -o --output           <file.png>
@@ -20,15 +20,15 @@ namespace Config
 
     // Anount of threads that the program will use for calculations
     //    -t --threads          <int>
-    Argument<int> Thread_count(1, "(^\\-t$)|(^\\-\\-threads?$)", intRegex);
+    Argument<int> Thread_count(16, "(^\\-t$)|(^\\-\\-threads?$)", intRegex);
 
     // Size of population
     //    -p --population       <int>
-    Argument<int> Population_size(1, "(^\\-p$)|(^\\-\\-population$)", intRegex);
+    Argument<int> Population_size(512, "(^\\-p$)|(^\\-\\-population$)", intRegex);
 
     // Amount of generated shapes
     //    -s --shapes-amount    <int>
-    Argument<int> Shape_amount(64, "(^\\-s$)|(^\\-\\-shapes\\-amount$)", intRegex);
+    Argument<int> Shape_amount(512, "(^\\-s$)|(^\\-\\-shapes\\-amount$)", intRegex);
 
     // Types of generated types in binary
     // 100 - triangles
@@ -36,20 +36,20 @@ namespace Config
     // 1 - squares
     //    -S --shape-types      <int>
     // TODO implement Argument<int> Shape_types
-    Argument<shapes_switch> Shape_types(0b010, "(^\\-S$)|(^\\-\\-shape\\-types$)", binaryRegex);
+    Argument<shapes_switch> Shape_types(0b111, "(^\\-S$)|(^\\-\\-shape\\-types$)", binaryRegex);
 
     // % Resemblance of source image at which the program will exit
     //    -r --resemblance      <float>
-    Argument<float> Resemblance(0.f, "(^\\-r$)|(^\\-\\-resemblance$)", floatRegex);
+    Argument<float> Resemblance(0.98f, "(^\\-r$)|(^\\-\\-resemblance$)", floatRegex);
 
 
     // hours after which the program will call it a day
     //    --hours      <float>
-    Argument<float> timeHours(1.f, "|(^\\-\\-hours$)", floatRegex);
+    Argument<float> timeHours(4.f, "|(^\\-\\-hours$)", floatRegex);
 
     // % scale of shapes 1 means a shape can take the whole canvas
     //    --scale               <float>
-    Argument<float> Scale(0.5f, "(^\\-\\-scale$)", floatRegex);
+    Argument<float> Scale(0.4f, "(^\\-\\-scale$)", floatRegex);
 
     // % chance of mutation
     //    -m --mutation         <float>
@@ -57,11 +57,11 @@ namespace Config
 
     // print info during program runtime
     //    -v --verbose
-    Argument<bool> Verbose(0, "(^\\-v$)|(^\\-\\-verbose$)");
+    Argument<bool> Verbose(1, "(^\\-v$)|(^\\-\\-verbose$)");
 
     //  print info during program runtime
     //    -v --verbose
-    Argument<int> Verbose_level(2, "(^\\-v$)|(^\\-\\-verbose$)", "^(?!-)[0-8]$");
+    Argument<int> Verbose_level(1, "(^\\-v$)|(^\\-\\-verbose$)", "^(?!-)[0-8]$");
 
     // print Logs to "Log.log" (best used with verbose)
     //    -L --log-to-file

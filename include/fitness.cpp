@@ -24,25 +24,31 @@ float fitness(cairo_surface_t *img, cairo_surface_t *surface)
     _height = cairo_image_surface_get_height(img);
 
     //TODO tests
-    return calculateFitness(img_data, surface_data, _width, _height);
-    // int temp_offset;
-    // int offset = _width * _height;
-    // float tmp_fitness = 0, row_fitness = 0, img_fitness = 0;
 
-    // for (size_t y = 0; y < _height; y++)
-    // {
-    //     for (size_t x = 0; x < _width; x++)
-    //     {
-    //         temp_offset = y * _width + x;
+    float ret = calculateFitness(img_data, surface_data, _width, _height);
+    return ret;
 
-    //         tmp_fitness += fitness_v1_RGBA(img_data + temp_offset * 4, surface_data + temp_offset * 4);
-    //         row_fitness += tmp_fitness;
-    //         tmp_fitness = 0;
-    //     }
-    //     row_fitness /= _width;
-    //     img_fitness += row_fitness;
-    //     row_fitness = 0;
-    // }
-    // img_fitness /= _height;
-    // return img_fitness;
+
+
+
+    int temp_offset;
+    int offset = _width * _height;
+    float tmp_fitness = 0, row_fitness = 0, img_fitness = 0;
+
+    for (size_t y = 0; y < _height; y++)
+    {
+        for (size_t x = 0; x < _width; x++)
+        {
+            temp_offset = y * _width + x;
+
+            tmp_fitness += fitness_v1_RGBA(img_data + temp_offset * 4, surface_data + temp_offset * 4);
+            row_fitness += tmp_fitness;
+            tmp_fitness = 0;
+        }
+        row_fitness /= _width;
+        img_fitness += row_fitness;
+        row_fitness = 0;
+    }
+    img_fitness /= _height;
+    return img_fitness;
 }

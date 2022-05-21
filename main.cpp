@@ -27,9 +27,12 @@ int main(int argc, char const *argv[])
     {
         newTimer("mainTestTimer");
 
+        Log.LogInfo("artGeneration");
         artGeneration gen(Config::Population_size.value, Config::Shape_amount.value);
+        Log.LogInfo("cairo_image_surface_create_from_png");
         cairo_surface_t *image = cairo_image_surface_create_from_png(Config::Input_name.value.c_str());
         //cairo_surface_t *image = cairo_image_surface_create_from_png(Config::Input_name.value.c_str());
+        Log.LogInfo("StartEvolution");
         gen.StartEvolution(image);
         cairo_surface_destroy(image);
     }
