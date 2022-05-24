@@ -173,6 +173,14 @@ void Genotype::Draw(cairo_surface_t *img, float Scale)
 	glfwTerminate();
 }
 
+
+void Genotype::DrawOGl(cairo_surface_t *img, float Scale)
+{
+
+}
+
+
+
 Genotype::~Genotype()
 {
     if (GeneArr)

@@ -23,6 +23,7 @@ struct Genotype
     void wiggle(float mutation_rate = 0.001);
     void cross(Genotype *parent1_, Genotype *parent2_, float mutation_rate = 0.05f, bool doCross = true);
     void Draw(cairo_surface_t *img, float Scale = 0.5);
+    void DrawOGl(cairo_surface_t *img, float Scale = 0.5);
     ~Genotype();
 };
 

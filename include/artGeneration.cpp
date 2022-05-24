@@ -20,6 +20,15 @@ void artGeneration::Draw(cairo_surface_t *img, size_t index)
     //cairo_surface_destroy(test);
 }
 
+void artGeneration::DrawOGl(cairo_surface_t *img, size_t index)
+{
+    this->children[index]->Draw(img, Config::Scale.value);
+}
+
+
+
+
+
 
 
 void asyncFitness(cairo_surface_t *img, Genotype **children, int *Bests, float *BestScores, int start, int stop, int _width, int _height)
@@ -57,6 +66,29 @@ void asyncFitness(cairo_surface_t *img, Genotype **children, int *Bests, float *
         cairo_surface_destroy(temp_surface);
     }
 }
+void artGeneration::StartAsyncFitness(cairo_surface_t *img, int *best, float *bestScores, int ThreadCount , int _width, int _height)
+{
+    newTimer("asyncFitness: ");
+    std::vector<std::thread> workers;
+    int offset = this->children_size / ThreadCount;
+    for (size_t i = 0; i < ThreadCount; i++)
+    {
+        // workers.push_back(
+        //     std::thread(asyncFitness, img, this->children,
+        //                 best + (i * 2),
+        //                 bestScores + (i * 2),
+        //                 offset * i, offset * (i + 1),
+        //                 _width, _height));
+        asyncFitness(img, this->children, best + (i * 2),bestScores + (i * 2),offset * i, offset * (i + 1),_width, _height);
+    }
+    for (std::thread &t : workers)
+    {
+        if (t.joinable())
+        {
+            t.join();
+        }
+    }
+}
 
 // TODO check why directly after the wiggle increases get really low
 void artGeneration::StartEvolution(cairo_surface_t *img)
@@ -81,61 +113,45 @@ void artGeneration::StartEvolution(cairo_surface_t *img)
         newTimer("Evolution: ");
         int best[ThreadCount * 2];
         float bestScores[ThreadCount * 2];
-        {
-            newTimer("asyncFitness: ");
-            std::vector<std::thread> workers;
-            int offset = this->children_size / ThreadCount;
-            for (size_t i = 0; i < ThreadCount; i++)
-            {
-                // workers.push_back(
-                //     std::thread(asyncFitness, img, this->children,
-                //                 best + (i * 2),
-                //                 bestScores + (i * 2),
-                //                 offset * i, offset * (i + 1),
-                //                 _width, _height));
-                asyncFitness(img, this->children,best + (i * 2),bestScores + (i * 2),offset * i, offset * (i + 1),_width, _height);
-            }
-            for (std::thread &t : workers)
-            {
-                if (t.joinable())
-                {
-                    t.join();
-                }
-            }
-        }
 
-        this->parent1 = -1;
-        this->parent2 = -1;
-        bestScore = 0;
-        bestScore2 = 0;
-        for (size_t i = 0; i < ThreadCount * 2; i++)
-        {
-            if (bestScores[i] > bestScore)
-            {
-                bestScore2 = bestScore;
-                bestScore = bestScores[i];
-                this->parent2 = this->parent1;
-                this->parent1 = best[i];
-            }
-            else if (bestScores[i] > bestScore2)
-            {
-                bestScore2 = bestScores[i];
-                this->parent2 = best[i];
-            }
-        }
+        StartAsyncFitness(img, best, bestScores, ThreadCount, _width, _height);
 
-        if (this->parent2 < 0)
-        {
+        #pragma region choose best scores
+            this->parent1 = -1;
+            this->parent2 = -1;
             bestScore = 0;
-            for (size_t i = 1; i < ThreadCount * 2; i++)
+            bestScore2 = 0;
+            for (size_t i = 0; i < ThreadCount * 2; i++)
             {
                 if (bestScores[i] > bestScore)
                 {
+                    bestScore2 = bestScore;
                     bestScore = bestScores[i];
+                    this->parent2 = this->parent1;
+                    this->parent1 = best[i];
+                }
+                else if (bestScores[i] > bestScore2)
+                {
+                    bestScore2 = bestScores[i];
                     this->parent2 = best[i];
                 }
             }
-        }
+
+            //in case of some error with way too small population sizes
+            if (this->parent2 < 0)
+            {
+                bestScore = 0;
+                for (size_t i = 1; i < ThreadCount * 2; i++)
+                {
+                    if (bestScores[i] > bestScore)
+                    {
+                        bestScore = bestScores[i];
+                        this->parent2 = best[i];
+                    }
+                }
+            }
+        #pragma endregion choose best scores
+
         if (wiggleCounter % 4 == 3)
         {
             wiggleCounter++;

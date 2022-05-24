@@ -41,7 +41,10 @@ private:
 public:
     artGeneration(int children_size = 50, int genotype_size = 64);
     void Draw(cairo_surface_t *img, size_t index);
+    void DrawOGl(cairo_surface_t *img, size_t index);
     void StartEvolution(cairo_surface_t *img);
+    void StartAsyncFitness(cairo_surface_t *img, int *best, float *bestScores, int ThreadCount , int _width, int _height);
+    
     ~artGeneration();
 };
 
