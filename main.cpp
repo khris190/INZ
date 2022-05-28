@@ -9,7 +9,7 @@
 //engine
 #include "include/OpenGL/engine.hpp"
 
-// TODO check the whole programm for Logs;
+
 int main(int argc, char const *argv[])
 {
 

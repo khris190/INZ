@@ -27,10 +27,6 @@ void artGeneration::DrawOGl(cairo_surface_t *img, size_t index)
 
 
 
-
-
-
-
 void asyncFitness(cairo_surface_t *img, Genotype **children, int *Bests, float *BestScores, int start, int stop, int _width, int _height)
 {
     Bests[0] = -1;
@@ -90,7 +86,6 @@ void artGeneration::StartAsyncFitness(cairo_surface_t *img, int *best, float *be
     }
 }
 
-// TODO check why directly after the wiggle increases get really low
 void artGeneration::StartEvolution(cairo_surface_t *img)
 {
     const int ThreadCount = Config::Thread_count.value;
