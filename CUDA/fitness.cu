@@ -61,7 +61,6 @@ float calculateFitness(unsigned char *img_data, unsigned char *surface_data, int
     }
     //increasing of this number lowers calculate2 timings 2 times and increases calculateFitnessFromArray 4 times, so its important to think about those numbers
     short offset = 64;
-    short sqrtOffset = 8;
     short rest = size% offset;
     size_t amount = (size - rest) / offset;
     size_t threadAmount = sqrt(amount) + 1;
@@ -75,7 +74,6 @@ float calculateFitness(unsigned char *img_data, unsigned char *surface_data, int
 
 
     double result = 0;
-    int temp_offset = 0;
     double row_fitness = 0;
     float tmp_fitness = 0;
     {
