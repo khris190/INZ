@@ -79,13 +79,13 @@ float calculateFitness(unsigned char *img_data, unsigned char *surface_data, int
     {
         newTimer("calculate2");
         {
-            for(int i = 0; i < amount; i++)
+            for (int i = 0; i < amount; i++)
             {
                 memcpy(&tmp_fitness, (void*)(test + 4*i*offset), sizeof(float));
                 row_fitness += tmp_fitness;
-
             }
-            for (size_t i = 0;i < rest; i++) {
+            for (size_t i = 0;i < rest; i++)
+            {
                 memcpy(&tmp_fitness, (void*)(test + amount*offset*4 + i*4 ), sizeof(float));
                 row_fitness += tmp_fitness;
             }
