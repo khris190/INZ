@@ -1,7 +1,6 @@
 
 #include "fitness.hpp"
 
-
 float calculateFitness(unsigned char *img_data, unsigned char *surface_data, int _width, int _height);
 float fitness_v1_RGBA(unsigned char *pA, unsigned char *pB)
 {   
@@ -27,9 +26,6 @@ float fitness(cairo_surface_t *img, cairo_surface_t *surface)
 
     float ret = calculateFitness(img_data, surface_data, _width, _height);
     return ret;
-
-
-
 
     int temp_offset;
     int offset = _width * _height;
