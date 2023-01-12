@@ -6,17 +6,16 @@
 #include <stdlib.h>
 #include <tgmath.h>
 #include "Randoms.hpp"
-
-
 struct Genotype
 {
     int size;
     Gene *GeneArr;
     Genotype(int size_ = 64);
-    void Swap_random(float mutation_rate = 0.001);
-    void mutate(float mutation_rate = 0.001);
-    void wiggle(float mutation_rate = 0.001);
-    void cross(Genotype *parent1_, Genotype *parent2_, float mutation_rate = 0.05f, bool doCross = true);
+    void Swap_all(float mutation_rate = 0.001f);
+    void Swap_one(float mutation_rate = 0.001f, int i = -1);
+    void mutate(float mutation_rate = 0.001f);
+    void wiggle(float mutation_rate = 0.001f);
+    void cross(Genotype *parent1_, Genotype *parent2_);
     void Draw(cairo_surface_t *img, float Scale = 0.5);
     ~Genotype();
 };

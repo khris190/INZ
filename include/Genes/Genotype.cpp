@@ -1,4 +1,5 @@
 #include "Genotype.hpp"
+#include "../Util/Logger.hpp"
 
 Genotype::Genotype(int size_)
 {
@@ -10,22 +11,32 @@ Genotype::Genotype(int size_)
     }
 }
 
-void Genotype::Swap_random(float mutation_rate)
+//randomly swap all shapes order
+void Genotype::Swap_all(float mutation_rate)
 {
     for (size_t i = 0; i < size; i++)
     {   
-        if (fRand() <= mutation_rate / 10)
+        this->Swap_one(mutation_rate, i);
+    }
+}
+//randomly swap one shapes order
+void Genotype::Swap_one(float mutation_rate, int i)
+{
+    if (i < 0)
+    {
+        i = rand()% size;
+    }
+    if (fRand() <= mutation_rate / 10)
+    {
+        int swap = rand()% size - 1;
+        if (swap >= i)
         {
-            int swap = rand()% size;
-            while (swap == i)
-            {
-                swap = rand()% size;
-            }
-            
-            Gene tmp = GeneArr[i];
-            GeneArr[i] = GeneArr[swap];
-            GeneArr[swap] = tmp;
+            swap += 1;
         }
+        
+        Gene tmp = GeneArr[i];
+        GeneArr[i] = GeneArr[swap];
+        GeneArr[swap] = tmp;
     }
 }
 
@@ -35,7 +46,7 @@ void Genotype::mutate(float mutation_rate)
     {
         GeneArr[i].mutate(mutation_rate);
     }
-    Swap_random(mutation_rate);
+    Swap_one(mutation_rate);
 }
 void Genotype::wiggle(float mutation_rate)
 {
@@ -45,40 +56,23 @@ void Genotype::wiggle(float mutation_rate)
     }
 }
 
-void Genotype::cross(Genotype *parent1_, Genotype *parent2_, float mutation_rate, bool doCross)
+void Genotype::cross(Genotype *parent1_, Genotype *parent2_)
 {
     if (parent1_->size != parent2_->size)
     {
-        return;
+        throw "parents size mismatch";
     }
     for (size_t i = 0; i < parent1_->size; i++)
     {
-        if (doCross)
+        if (rand() % 2)
         {
-            if (rand() % 2)
-            {
-                this->GeneArr[i] = parent1_->GeneArr[i];
-            }
-            else
-            {
-                this->GeneArr[i] = parent2_->GeneArr[i];
-            }
+            this->GeneArr[i] = parent1_->GeneArr[i];
         }
         else
         {
-
-            if (i <= parent1_->size / 2)
-            {
-                this->GeneArr[i] = parent1_->GeneArr[i];
-            }
-            else
-            {
-                this->GeneArr[i] = parent2_->GeneArr[i];
-            }
+            this->GeneArr[i] = parent2_->GeneArr[i];
         }
-
     }
-        this->mutate(mutation_rate);
 }
 
 inline myData::position_2D rotate(float x, float y, float angle)
@@ -172,6 +166,7 @@ void Genotype::Draw(cairo_surface_t *img, float Scale)
 
 Genotype::~Genotype()
 {
+    Log.LogDeb("Free genotype");
     if (GeneArr)
     {
         free(GeneArr);

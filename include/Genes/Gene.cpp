@@ -16,7 +16,7 @@ shape_type genType()
 void Gene::createRandom()
 {
     typeOfShape = genType();
-    position = myData::position_2D(fRand(), fRand());
+    position = myData::float2(fRand(), fRand());
     rotation = fRand();
     scale = myData::float2(fRand(), fRand());
     color = myData::color_RGBA(fRand(), fRand(), fRand(), fRand());
@@ -53,7 +53,7 @@ void Gene::mutate_pos(float mutation_rate)
 {
     if (fRand() <= mutation_rate)
     {
-        position = myData::position_2D(fRand(), fRand());
+        position = myData::float2(fRand(), fRand());
     }
 }
 void Gene::mutate_rot(float mutation_rate)
@@ -111,4 +111,9 @@ void Gene::wiggle_size(float mutation_rate)
         scale.x += (fRand() * 2 - 1) / 200;
         scale.y += (fRand() * 2 - 1) / 200;
     }
+}
+
+Gene::~Gene()
+{
+    Log.LogDeb("Free Gene");
 }

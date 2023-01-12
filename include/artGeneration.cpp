@@ -1,32 +1,27 @@
 #include "artGeneration.hpp"
 
-void artGeneration::makeChildren(float mutation_rate, bool doCross)
+void artGeneration::createChildren(float mutation_rate, bool doCross)
 {
-    for (size_t i = 2; i < children_size; i++)
+    for (size_t i = 0; i < children_size; i++)
     {
         if (i != this->parent1 && i != this->parent2)
         {
-            this->children[i]->cross(this->children[parent1], this->children[parent2], mutation_rate);
+            this->children[i]->cross(this->children[parent1], this->children[parent2]);
+            this->children[i]->mutate(mutation_rate);
         }
     }
 }
+
 void artGeneration::Draw(cairo_surface_t *img, size_t index)
 {
-
-    // int _width = cairo_image_surface_get_width(img);
-    // int _height = cairo_image_surface_get_height(img);
-    // cairo_surface_t * test = cairo_surface_create_similar(img, CAIRO_CONTENT_COLOR_ALPHA, _width, _height);
     this->children[index]->Draw(img, Config::Scale.value);
-    //cairo_surface_destroy(test);
 }
 
-
-
-void asyncFitness(cairo_surface_t *img, Genotype **children, int *Bests, float *BestScores, int start, int stop, int _width, int _height)
+void asyncFitness(cairo_surface_t *img, Genotype **children, int *BestSIndexs, float *BestScores, int start, int stop, int _width, int _height)
 {
     newTimer("fitness");
-    Bests[0] = -1;
-    Bests[1] = -1;
+    BestSIndexs[0] = -1;
+    BestSIndexs[1] = -1;
     float bestScore = 0;
     float bestScore2 = 0;
     BestScores[0] = 0;
@@ -45,14 +40,14 @@ void asyncFitness(cairo_surface_t *img, Genotype **children, int *Bests, float *
             bestScore = score;
             BestScores[1] = BestScores[0];
             BestScores[0] = bestScore;
-            Bests[1] = Bests[0];
-            Bests[0] = i;
+            BestSIndexs[1] = BestSIndexs[0];
+            BestSIndexs[0] = i;
         }
         else if (bestScore2 < score)
         {
             bestScore2 = score;
             BestScores[1] = bestScore2;
-            Bests[1] = i;
+            BestSIndexs[1] = i;
         }
 
         cairo_surface_destroy(temp_surface);
@@ -62,7 +57,7 @@ void asyncFitness(cairo_surface_t *img, Genotype **children, int *Bests, float *
 // TODO check why directly after the wiggle increases get really low
 void artGeneration::StartEvolution(cairo_surface_t *img)
 {
-    const int ThreadCount = Config::Thread_count.value;
+    const int coreCount = Config::Thread_count.value;
     float bestScore = 0;
     float bestScore2 = 0;
     int noChangesCounter = 0;
@@ -80,12 +75,13 @@ void artGeneration::StartEvolution(cairo_surface_t *img)
     do
     {
         newTimer("Evolution: ");
-        int best[ThreadCount * 2];
-        float bestScores[ThreadCount * 2];
+        #pragma region calculate best
+        int best[coreCount * 2];
+        float bestScores[coreCount * 2];
         {
             std::vector<std::thread> workers;
-            int offset = this->children_size / ThreadCount;
-            for (size_t i = 0; i < ThreadCount; i++)
+            int offset = this->children_size / coreCount;
+            for (size_t i = 0; i < coreCount; i++)
             {
                 workers.push_back(
                     std::thread(asyncFitness, img, this->children,
@@ -107,7 +103,7 @@ void artGeneration::StartEvolution(cairo_surface_t *img)
         this->parent2 = -1;
         bestScore = 0;
         bestScore2 = 0;
-        for (size_t i = 0; i < ThreadCount * 2; i++)
+        for (size_t i = 0; i < coreCount * 2; i++)
         {
             if (bestScores[i] > bestScore)
             {
@@ -126,7 +122,7 @@ void artGeneration::StartEvolution(cairo_surface_t *img)
         if (this->parent2 < 0)
         {
             bestScore = 0;
-            for (size_t i = 1; i < ThreadCount * 2; i++)
+            for (size_t i = 1; i < coreCount * 2; i++)
             {
                 if (bestScores[i] > bestScore)
                 {
@@ -156,7 +152,7 @@ void artGeneration::StartEvolution(cairo_surface_t *img)
         else
         {
             wiggleCounter++;
-            this->makeChildren(Config::Mutation.value);
+            this->createChildren(Config::Mutation.value);
         }
 
         if (lastScore == bestScore)
@@ -170,7 +166,7 @@ void artGeneration::StartEvolution(cairo_surface_t *img)
         if (noChangesCounter >= 10)
         {
             Log.LogInfo("using increased mutation rate");
-            this->makeChildren(Config::Mutation.value * 2);
+            this->createChildren(Config::Mutation.value * 2);
         }
 
         lastScore = bestScore;
@@ -195,9 +191,10 @@ void artGeneration::StartEvolution(cairo_surface_t *img)
     this->Draw(temp_surface, this->parent1);
     cairo_surface_write_to_png(temp_surface, Config::GetOutputFilePathAndFileName(savedBestScore).c_str());
 
-    cairo_surface_destroy(temp_surface);
-
-    // return best;
+    if (temp_surface)
+    {
+        cairo_surface_destroy(temp_surface);
+    }
 }
 void artGeneration::generateFirstPopulation(int children_size, int genotype_size)
 {

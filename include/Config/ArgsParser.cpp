@@ -1,5 +1,38 @@
 #include "ArgsParser.hpp"
 
+template <typename T>
+bool MatchAndSetArg(Argument<T> &arg, char const *argv[], int i)
+{
+    if (std::regex_match(argv[i], std::regex(arg.Regex_tag)))
+    {
+        if (typeid(arg.value) == typeid(bool))
+        {
+            arg.value = 1;
+            return true;
+        }
+        else
+        {
+            if (!arg.Value_regex_tag.empty())
+            {
+                if (std::regex_match(argv[i + 1], std::regex(arg.Value_regex_tag)))
+                {
+                    if (typeid(arg.value) == typeid(int))
+                    {
+                        arg.value = std::stoi(argv[i + 1]);
+                    }
+                    else if (typeid(arg.value) == typeid(float))
+                    {
+                        arg.value = std::stof(argv[i + 1]);
+                    }
+                    else
+                        return false;
+                    return true;
+                }
+            }
+        }
+    }
+    return false;
+}
 bool MatchAndSetArg(Argument<std::string> &arg, char const *argv[], int i)
 {
     if (std::regex_match(argv[i], std::regex(arg.Regex_tag)))
@@ -17,64 +50,7 @@ bool MatchAndSetArg(Argument<std::string> &arg, char const *argv[], int i)
     }
     return false;
 }
-bool MatchAndSetArg(Argument<int> &arg, char const *argv[], int i)
-{
-    if (std::regex_match(argv[i], std::regex(arg.Regex_tag)))
-    {
-        if (typeid(arg.value) == typeid(int))
-        {
-            if (!arg.Value_regex_tag.empty())
-            {
-                if (std::regex_match(argv[i + 1], std::regex(arg.Value_regex_tag)))
-                {
-                    arg.value = std::stoi(argv[i + 1]);
-                }
-            }
-            else
-                arg.value = std::stoi(argv[i + 1]);
-        }
-        else
-            return false;
-        return true;
-    }
-    return false;
-}
-bool MatchAndSetArg(Argument<float> &arg, char const *argv[], int i)
-{
-    if (std::regex_match(argv[i], std::regex(arg.Regex_tag)))
-    {
-        if (typeid(arg.value) == typeid(float))
-        {
-            if (!arg.Value_regex_tag.empty())
-            {
-                if (std::regex_match(argv[i + 1], std::regex(arg.Value_regex_tag)))
-                {
-                    arg.value = std::stof(argv[i + 1]);
-                }
-            }
-            else
-                arg.value = std::stof(argv[i + 1]);
-        }
-        else
-            return false;
-        return true;
-    }
-    return false;
-}
-bool MatchAndSetArg(Argument<bool> &arg, char const *argv[], int i)
-{
-    if (std::regex_match(argv[i], std::regex(arg.Regex_tag)))
-    {
-        if (typeid(arg.value) == typeid(bool))
-        {
-            arg.value = 1;
-        }
-        else
-            return false;
-        return true;
-    }
-    return false;
-}
+
 bool MatchAndSetArg(Argument<shapes_switch> &arg, char const *argv[], int i)
 {
     if (std::regex_match(argv[i], std::regex(arg.Regex_tag)))
@@ -191,4 +167,4 @@ bool ParseMainArguments(int argc, char const *argv[])
     Config::CreateFolderForOutput();
     Config::startTime = std::time(nullptr);
     return true;
-}
+};

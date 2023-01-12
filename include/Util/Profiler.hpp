@@ -9,7 +9,6 @@
 #include <iostream>
 #include <mutex>
 
-
 struct Sample
 {
     long nsTime;
@@ -50,7 +49,6 @@ public:
     void clearSamples();
     void printProfilerData(bool doClearSamples = true);
 };
-
 
 #define TOKENPASTE(x, y) x##y
 #define TOKENPASTE2(x, y) TOKENPASTE(x, y)

@@ -3,11 +3,12 @@
 
 #include "DataStructures.hpp"
 #include "../Config/Config.hpp"
+#include "..//Util/Logger.hpp"
 // TODO implement parametrized shapes
 struct Gene
 {
     shape_type typeOfShape;
-    myData::position_2D position;
+    myData::float2 position;
     float rotation;
     myData::float2 scale;
     myData::color_RGBA color;
@@ -23,6 +24,7 @@ struct Gene
     void wiggle_pos(float mutation_rate = 0.001);
     void wiggle_rot(float mutation_rate = 0.001);
     void wiggle_size(float mutation_rate = 0.001);
+    ~Gene();
 };
 
 #endif // GENE_HPP
