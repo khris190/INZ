@@ -138,8 +138,6 @@ void artGeneration::StartEvolution(cairo_surface_t *img)
         
         if (wiggleCounter % 4 == 3)
         {
-            wiggleCounter++;
-            Log.LogInfo("WIGGLE");
             // wiggle
             for (size_t i = 0; i < children_size; i++)
             {
@@ -148,12 +146,15 @@ void artGeneration::StartEvolution(cairo_surface_t *img)
                     this->children[i]->wiggle(Config::Mutation.value * 2);
                 }
             }
+        } else if (wiggleCounter % 4 == 0)
+        {
+            Log.LogInfo("WIGGLE");
         }
         else
         {
-            wiggleCounter++;
             this->createChildren(Config::Mutation.value);
         }
+        wiggleCounter++;
 
         if (lastScore == bestScore)
         {
