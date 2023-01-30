@@ -19,6 +19,7 @@ void Genotype::Swap_all(float mutation_rate)
         this->Swap_one(mutation_rate, i);
     }
 }
+
 //randomly swap one shapes order
 void Genotype::Swap_one(float mutation_rate, int i)
 {
@@ -26,7 +27,7 @@ void Genotype::Swap_one(float mutation_rate, int i)
     {
         i = rand()% size;
     }
-    if (fRand() <= mutation_rate / 10)
+    if (fRand() <= mutation_rate * 0)
     {
         int swap = rand()% size - 1;
         if (swap >= i)
@@ -46,7 +47,8 @@ void Genotype::mutate(float mutation_rate)
     {
         GeneArr[i].mutate(mutation_rate);
     }
-    Swap_one(mutation_rate);
+    //TODO seems to not work on linux 6.1 nor on 6.0 ?
+    //Swap_one(mutation_rate);
 }
 void Genotype::wiggle(float mutation_rate)
 {
@@ -80,7 +82,7 @@ inline myData::position_2D rotate(float x, float y, float angle)
     return myData::position_2D(x * cos(angle) - y * sin(angle), x * sin(angle) + y * cos(angle));
 }
 
-//TODO use opengl probably
+//TODO use opengl
 void Genotype::Draw(cairo_surface_t *img, float Scale)
 {
     cairo_t *cr;

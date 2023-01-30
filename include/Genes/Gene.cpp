@@ -1,5 +1,6 @@
 #include "Gene.hpp"
 #include "Randoms.hpp"
+#include <math.h>
 
 shape_type genType()
 {
@@ -83,37 +84,32 @@ void Gene::wiggle_color(float mutation_rate)
 {
     if (fRand() <= mutation_rate)
     {
-        color.r += (fRand() * 2 - 1) / 100;
-        color.g += (fRand() * 2 - 1) / 100;
-        color.b += (fRand() * 2 - 1) / 100;
-        color.a += (fRand() * 2 - 1) / 100;
+        color.r += (fRand() - color.r) / 50;
+        color.g += (fRand() - color.g) / 50;
+        color.b += (fRand() - color.b) / 50;
+        color.a += (fRand() - color.a) / 50;
     }
 }
 void Gene::wiggle_pos(float mutation_rate)
 {
     if (fRand() <= mutation_rate)
     {
-        position.x += (fRand() * 2 - 1) / 200;
-        position.y += (fRand() * 2 - 1) / 200;
+        position.x += (fRand() - position.x) / 100;
+        position.y += (fRand() - position.y) / 100;
     }
 }
 void Gene::wiggle_rot(float mutation_rate)
 {
     if (fRand() <= mutation_rate)
     {
-        rotation += (fRand() * 2 - 1) / 200;
+        rotation += (fRand() - rotation) / 50;
     }
 }
 void Gene::wiggle_size(float mutation_rate)
 {
     if (fRand() <= mutation_rate)
     {
-        scale.x += (fRand() * 2 - 1) / 200;
-        scale.y += (fRand() * 2 - 1) / 200;
+        scale.x += (fRand() - scale.x) / 50;
+        scale.y += (fRand() - scale.y) / 50;
     }
-}
-
-Gene::~Gene()
-{
-    Log.LogDeb("Free Gene");
 }

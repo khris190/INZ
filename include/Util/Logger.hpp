@@ -185,7 +185,6 @@ public:
     }
 #pragma endregion setFile
 
-    // TODO change string to c_str cause it will be  way faster to do it by myself
     /* Log a message.
      *
      * \param	Level	The severity of the message
@@ -252,7 +251,7 @@ public:
         if (this->timestampEnabled)
         {
             std::time_t time = system_clock::to_time_t(system_clock::now());
-            if (this->lastTime + 1 < time)
+            if (this->lastTime < time)
             {
                 this->lastTime = time;
                 struct tm *timeStruct = std::localtime(&time);

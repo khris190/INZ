@@ -125,7 +125,6 @@ void PrintInfos()
     }
 }
 
-// TODO chekc if stuff after a flag is another flag or a parameter
 bool ParseMainArguments(int argc, char const *argv[])
 {
     int i;

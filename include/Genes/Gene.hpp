@@ -4,7 +4,6 @@
 #include "DataStructures.hpp"
 #include "../Config/Config.hpp"
 #include "..//Util/Logger.hpp"
-// TODO implement parametrized shapes
 struct Gene
 {
     shape_type typeOfShape;
@@ -24,7 +23,6 @@ struct Gene
     void wiggle_pos(float mutation_rate = 0.001);
     void wiggle_rot(float mutation_rate = 0.001);
     void wiggle_size(float mutation_rate = 0.001);
-    ~Gene();
 };
 
 #endif // GENE_HPP

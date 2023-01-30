@@ -17,13 +17,13 @@ void artGeneration::Draw(cairo_surface_t *img, size_t index)
     this->children[index]->Draw(img, Config::Scale.value);
 }
 
-void asyncFitness(cairo_surface_t *img, Genotype **children, int *BestSIndexs, float *BestScores, int start, int stop, int _width, int _height)
+void asyncFitness(cairo_surface_t *img, Genotype **children, volatile int *BestSIndexs, volatile float *BestScores, int start, int stop, int _width, int _height)
 {
     newTimer("fitness");
     BestSIndexs[0] = -1;
     BestSIndexs[1] = -1;
-    float bestScore = 0;
-    float bestScore2 = 0;
+    volatile float bestScore = 0;
+    volatile float bestScore2 = 0;
     BestScores[0] = 0;
     BestScores[1] = 0;
     for (size_t i = start; i < stop; i++)
@@ -54,7 +54,6 @@ void asyncFitness(cairo_surface_t *img, Genotype **children, int *BestSIndexs, f
     }
 }
 
-// TODO check why directly after the wiggle increases get really low
 void artGeneration::StartEvolution(cairo_surface_t *img)
 {
     const int coreCount = Config::Thread_count.value;
@@ -71,31 +70,28 @@ void artGeneration::StartEvolution(cairo_surface_t *img)
     _height = cairo_image_surface_get_height(img);
 
     long wiggleCounter = 0;
-
+    BS::thread_pool_light pool(coreCount);
     do
     {
         newTimer("Evolution: ");
         #pragma region calculate best
-        int best[coreCount * 2];
-        float bestScores[coreCount * 2];
+        volatile int best[coreCount * 2];
+        volatile float bestScores[coreCount * 2];
         {
-            std::vector<std::thread> workers;
+            std::vector<std::future<void>> workers;
             int offset = this->children_size / coreCount;
             for (size_t i = 0; i < coreCount; i++)
             {
                 workers.push_back(
-                    std::thread(asyncFitness, img, this->children,
+                    pool.submit(asyncFitness, img, this->children,
                                 best + (i * 2),
                                 bestScores + (i * 2),
                                 offset * i, offset * (i + 1),
                                 _width, _height));
             }
-            for (std::thread &t : workers)
+            for (std::future<void> &t : workers)
             {
-                if (t.joinable())
-                {
-                    t.join();
-                }
+                t.get();
             }
         }
 
@@ -149,6 +145,7 @@ void artGeneration::StartEvolution(cairo_surface_t *img)
         } else if (wiggleCounter % 4 == 0)
         {
             Log.LogInfo("WIGGLE");
+            this->createChildren(Config::Mutation.value);
         }
         else
         {
