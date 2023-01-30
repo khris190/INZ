@@ -3,11 +3,11 @@
 
 #include "DataStructures.hpp"
 #include "../Config/Config.hpp"
-// TODO implement parametrized shapes
+#include "..//Util/Logger.hpp"
 struct Gene
 {
     shape_type typeOfShape;
-    myData::position_2D position;
+    myData::float2 position;
     float rotation;
     myData::float2 scale;
     myData::color_RGBA color;

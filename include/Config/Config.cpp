@@ -35,7 +35,6 @@ namespace Config
     // 10 - ellipses
     // 1 - squares
     //    -S --shape-types      <int>
-    // TODO implement Argument<int> Shape_types
     Argument<shapes_switch> Shape_types(0b111, "(^\\-S$)|(^\\-\\-shape\\-types$)", binaryRegex);
 
     // % Resemblance of source image at which the program will exit

@@ -9,7 +9,6 @@
 #include <iostream>
 #include <mutex>
 
-
 struct Sample
 {
     long nsTime;
@@ -51,12 +50,11 @@ public:
     void printProfilerData(bool doClearSamples = true);
 };
 
-
 #define TOKENPASTE(x, y) x##y
 #define TOKENPASTE2(x, y) TOKENPASTE(x, y)
 // use for acurate creation to block end timing
 #define newTimer(name) PTimer TOKENPASTE2(Timer_, __LINE__) = PTimer(name)
-// use by throwing newTimer(string name) into code block that has to be measured
+// use by throwing newTimer({string name}) into code block that has to be measured
 class PTimer
 {
 private:

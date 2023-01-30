@@ -23,7 +23,7 @@ struct float4
     float4(float x_ = 0, float y_ = 0, float z_ = 0, float a_ = 0);
 };
 
-struct position_2D
+struct position_2D : float2
 {
     float x, y;
     position_2D(float x_ = 0, float y_ = 0);

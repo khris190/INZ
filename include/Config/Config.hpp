@@ -32,7 +32,7 @@ inline Argument<T>::Argument(T val_, std::string Regex_tag_, std::string Value_r
         }
         else if (typeid(T) == typeid(float))
         {
-            Value_regex_tag = "[\\d.]+";
+            Value_regex_tag = "([\\d]+([.][\\d*)?)|[.][\\d]";
         }
     }
     

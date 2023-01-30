@@ -63,8 +63,6 @@ static map<Level, string> levelMap = {
     {Level::ALERT, "ALERT"},
     {Level::EMERG, "EMERGENCY"}};
 
-// std::string getLoggerfunctionInfo(Level level, bool enableLevel = true, bool enableTimeStamp = true, bool enableFunctionInfo = true, const std::source_location location = std::source_location::current());
-
 class Logger
 {
 public:
@@ -187,7 +185,6 @@ public:
     }
 #pragma endregion setFile
 
-    // TODO change string to c_str cause it might be way faster to do it by myself
     /* Log a message.
      *
      * \param	Level	The severity of the message
@@ -213,16 +210,14 @@ public:
             setFile(this->LoggerFile);
         }
 
-        toLogger += getLoggerfunctionInfo(level, location);
-
         // Append the message to our Logger statement
         if (this->fileEnabled || this->timestampEnabled || this->levelEnabled)
         {
-            toLogger += ":\n" + message + "\n";
+            toLogger = getLoggerfunctionInfo(level, location) + ":\n" + message + "\n";
         }
         else
         {
-            toLogger += message + "\n";
+            toLogger = message + "\n";
         }
         // printf makes printing a bit faster
         // Logger to stdout if it's one of our targets
@@ -256,16 +251,16 @@ public:
         if (this->timestampEnabled)
         {
             std::time_t time = system_clock::to_time_t(system_clock::now());
-            if (this->lastTime + 1 < time)
+            if (this->lastTime < time)
             {
                 this->lastTime = time;
                 struct tm *timeStruct = std::localtime(&time);
-                strftime(this->timeStr, 80, "%d/%b/%Y:%H:%M:%S", timeStruct);
+                strftime(this->timeStr, 120, "%d/%b/%Y %H:%M:%S", timeStruct);
             }
-            char *cstring = (char *)malloc(sizeof(char) * 90);
-            size_t test = cpyChar(cstring, "[");
-            test += cpyChar(cstring + test, this->timeStr);
-            test += cpyChar(cstring + test, "] ");
+            char *cstring = (char *)malloc(sizeof(char) * 128);
+            size_t offset = cpyChar(cstring, "[");
+            offset += cpyChar(cstring + offset, this->timeStr);
+            offset += cpyChar(cstring + offset, "] ");
             toLogger += cstring;
             free(cstring);
         }
@@ -424,8 +419,8 @@ inline Target operator|(Target a, Target b)
     return static_cast<Target>(static_cast<short>(a) | static_cast<short>(b));
 }
 #pragma endregion Bit - wise operators
-
-inline size_t cpyChar(char *dest, const char *src)
+__attribute__ ((warning("unsafe memory management")))
+inline size_t cpyChar(char *dest, const char *src) 
 {
     size_t i = 0;
     while (src[i] != '\0')
@@ -436,6 +431,7 @@ inline size_t cpyChar(char *dest, const char *src)
     dest[i] = src[i];
     return i;
 }
+__attribute__ ((warning("unsafe memory management")))
 inline size_t cpyChar(char *dest, unsigned int src)
 {
     size_t y = 0;

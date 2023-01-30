@@ -9,6 +9,7 @@
 #include <thread>
 #include "Genes/Genotype.hpp"
 #include "Config/Config.hpp"
+#include "Util/BS_thread_pool_light.hpp"
 
 
 struct point
@@ -34,8 +35,7 @@ private:
     int children_size;
     int parent1, parent2;
 
-    void makeChildren(float mutation_rate = 0.05f,bool doCross = true);
-
+    void createChildren(float mutation_rate = 0.05f,bool doCross = true);
     void generateFirstPopulation(int children_size, int genotype_size);
 
 public:

@@ -56,7 +56,15 @@ std::string Profiler::getTimingsAsString(bool doClearSamples)
         }
         retString += "\n";
     }
-    return retString;
+    if (localSamples.size())
+    {
+        return retString;
+    }
+    else
+    {
+        return "no timings";
+    }
+    
 }
 
 std::vector<Sample> Profiler::getTimings(bool doClearSamples)
