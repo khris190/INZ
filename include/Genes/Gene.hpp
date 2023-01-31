@@ -3,26 +3,28 @@
 
 #include "DataStructures.hpp"
 #include "../Config/Config.hpp"
-#include "..//Util/Logger.hpp"
-struct Gene
+#include "../Util/Logger.hpp"
+class Gene
 {
-    shape_type typeOfShape;
-    myData::float2 position;
-    float rotation;
-    myData::float2 scale;
-    myData::color_RGBA color;
-    void createRandom();
-    void mutate(float mutation_rate = 0.001);
-    void mutate_type(float mutation_rate = 0.001);
-    void mutate_color(float mutation_rate = 0.001);
-    void mutate_pos(float mutation_rate = 0.001);
-    void mutate_rot(float mutation_rate = 0.001);
-    void mutate_size(float mutation_rate = 0.001);
-    void wiggle(float mutation_rate = 0.001);
-    void wiggle_color(float mutation_rate = 0.001);
-    void wiggle_pos(float mutation_rate = 0.001);
-    void wiggle_rot(float mutation_rate = 0.001);
-    void wiggle_size(float mutation_rate = 0.001);
+    public:
+        ShapeType type_of_shape;
+        myData::float2 position;
+        float rotation;
+        myData::float2 scale;
+        myData::color_RGBA color;
+        void CreateRandom();
+        void Mutate(float mutation_rate = 0.001f);
+        void Wiggle(float mutation_rate = 0.001f);
+    private:
+        void MutateType(float mutation_rate = 0.001f);
+        void MutateColor(float mutation_rate = 0.001f);
+        void MutatePos(float mutation_rate = 0.001f);
+        void MutateRot(float mutation_rate = 0.001f);
+        void MutateSize(float mutation_rate = 0.001f);
+        void WiggleColor(float mutation_rate = 0.001f);
+        void WigglePos(float mutation_rate = 0.001f);
+        void WiggleRot(float mutation_rate = 0.001f);
+        void WiggleSize(float mutation_rate = 0.001f);
 };
 
 #endif // GENE_HPP

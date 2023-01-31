@@ -1,31 +1,31 @@
-#include "artGeneration.hpp"
+#include "ArtGeneration.hpp"
 
-void artGeneration::createChildren(float mutation_rate, bool doCross)
+void ArtGeneration::CreateChildren(float mutation_rate)
 {
-    for (size_t i = 0; i < children_size; i++)
+    for (size_t i = 0; i < children_size_; i++)
     {
-        if (i != this->parent1 && i != this->parent2)
+        if (i != this->parent1_ && i != this->parent2_)
         {
-            this->children[i]->cross(this->children[parent1], this->children[parent2]);
-            this->children[i]->mutate(mutation_rate);
+            this->children_[i]->Cross(this->children_[parent1_], this->children_[parent2_]);
+            this->children_[i]->Mutate(mutation_rate);
         }
     }
 }
 
-void artGeneration::Draw(cairo_surface_t *img, size_t index)
+void ArtGeneration::Draw(cairo_surface_t *img, size_t index)
 {
-    this->children[index]->Draw(img, Config::Scale.value);
+    this->children_[index]->Draw(img, Config::scale.value);
 }
 
-void asyncFitness(cairo_surface_t *img, Genotype **children, volatile int *BestSIndexs, volatile float *BestScores, int start, int stop, int _width, int _height)
+void ArtGeneration::AsyncFitness(cairo_surface_t *img, Genotype **children, volatile int *best_indexes, volatile float *best_scores, int start, int stop, int _width, int _height)
 {
     newTimer("fitness");
-    BestSIndexs[0] = -1;
-    BestSIndexs[1] = -1;
+    best_indexes[0] = -1;
+    best_indexes[1] = -1;
     volatile float bestScore = 0;
     volatile float bestScore2 = 0;
-    BestScores[0] = 0;
-    BestScores[1] = 0;
+    best_scores[0] = 0;
+    best_scores[1] = 0;
     for (size_t i = start; i < stop; i++)
     {
         cairo_surface_t *temp_surface = cairo_image_surface_create(CAIRO_FORMAT_ARGB32, _width, _height);
@@ -38,25 +38,25 @@ void asyncFitness(cairo_surface_t *img, Genotype **children, volatile int *BestS
         {
             bestScore2 = bestScore;
             bestScore = score;
-            BestScores[1] = BestScores[0];
-            BestScores[0] = bestScore;
-            BestSIndexs[1] = BestSIndexs[0];
-            BestSIndexs[0] = i;
+            best_scores[1] = best_scores[0];
+            best_scores[0] = bestScore;
+            best_indexes[1] = best_indexes[0];
+            best_indexes[0] = i;
         }
         else if (bestScore2 < score)
         {
             bestScore2 = score;
-            BestScores[1] = bestScore2;
-            BestSIndexs[1] = i;
+            best_scores[1] = bestScore2;
+            best_indexes[1] = i;
         }
 
         cairo_surface_destroy(temp_surface);
     }
 }
 
-void artGeneration::StartEvolution(cairo_surface_t *img)
+void ArtGeneration::StartEvolution(cairo_surface_t *img)
 {
-    const int coreCount = Config::Thread_count.value;
+    const int coreCount = Config::thread_count.value;
     float bestScore = 0;
     float bestScore2 = 0;
     int noChangesCounter = 0;
@@ -79,11 +79,11 @@ void artGeneration::StartEvolution(cairo_surface_t *img)
         volatile float bestScores[coreCount * 2];
         {
             std::vector<std::future<void>> workers;
-            int offset = this->children_size / coreCount;
+            int offset = this->children_size_ / coreCount;
             for (size_t i = 0; i < coreCount; i++)
             {
                 workers.push_back(
-                    pool.submit(asyncFitness, img, this->children,
+                    pool.submit(ArtGeneration::AsyncFitness, img, this->children_,
                                 best + (i * 2),
                                 bestScores + (i * 2),
                                 offset * i, offset * (i + 1),
@@ -95,8 +95,8 @@ void artGeneration::StartEvolution(cairo_surface_t *img)
             }
         }
 
-        this->parent1 = -1;
-        this->parent2 = -1;
+        this->parent1_ = -1;
+        this->parent2_ = -1;
         bestScore = 0;
         bestScore2 = 0;
         for (size_t i = 0; i < coreCount * 2; i++)
@@ -105,17 +105,17 @@ void artGeneration::StartEvolution(cairo_surface_t *img)
             {
                 bestScore2 = bestScore;
                 bestScore = bestScores[i];
-                this->parent2 = this->parent1;
-                this->parent1 = best[i];
+                this->parent2_ = this->parent1_;
+                this->parent1_ = best[i];
             }
             else if (bestScores[i] > bestScore2)
             {
                 bestScore2 = bestScores[i];
-                this->parent2 = best[i];
+                this->parent2_ = best[i];
             }
         }
 
-        if (this->parent2 < 0)
+        if (this->parent2_ < 0)
         {
             bestScore = 0;
             for (size_t i = 1; i < coreCount * 2; i++)
@@ -123,33 +123,33 @@ void artGeneration::StartEvolution(cairo_surface_t *img)
                 if (bestScores[i] > bestScore)
                 {
                     bestScore = bestScores[i];
-                    this->parent2 = best[i];
+                    this->parent2_ = best[i];
                 }
             }
         }
-        if (0 > parent1 || 0 > parent2)
+        if (0 > parent1_ || 0 > parent2_)
         {
-            Log.LogEmerg("wtf, parent1 or parent2 wasnt selected");
+            Log.LogEmerg("wtf, parent1_ or parent2_ wasnt selected");
         }
         
         if (wiggleCounter % 4 == 3)
         {
-            // wiggle
-            for (size_t i = 0; i < children_size; i++)
+            // Wiggle
+            for (size_t i = 0; i < children_size_; i++)
             {
-                if (i != parent1 && i != parent2)
+                if (i != parent1_ && i != parent2_)
                 {
-                    this->children[i]->wiggle(Config::Mutation.value * 2);
+                    this->children_[i]->Wiggle(Config::mutation.value * 2);
                 }
             }
         } else if (wiggleCounter % 4 == 0)
         {
             Log.LogInfo("WIGGLE");
-            this->createChildren(Config::Mutation.value);
+            this->CreateChildren(Config::mutation.value);
         }
         else
         {
-            this->createChildren(Config::Mutation.value);
+            this->CreateChildren(Config::mutation.value);
         }
         wiggleCounter++;
 
@@ -164,7 +164,7 @@ void artGeneration::StartEvolution(cairo_surface_t *img)
         if (noChangesCounter >= 10)
         {
             Log.LogInfo("using increased mutation rate");
-            this->createChildren(Config::Mutation.value * 2);
+            this->CreateChildren(Config::mutation.value * 2);
         }
 
         lastScore = bestScore;
@@ -177,16 +177,16 @@ void artGeneration::StartEvolution(cairo_surface_t *img)
             if (MutationsCounter % 10 == 0)
             {
                 cairo_surface_t *temp_surface = cairo_image_surface_create(CAIRO_FORMAT_ARGB32, _width, _height);
-                this->Draw(temp_surface, this->parent1);
+                this->Draw(temp_surface, this->parent1_);
                 cairo_surface_write_to_png(temp_surface, Config::GetOutputFilePathAndFileName(savedBestScore).c_str());
 
                 cairo_surface_destroy(temp_surface);
             }
             MutationsCounter++;
         }
-    } while (bestScore < Config::Resemblance.value && !Config::doStop());
+    } while (bestScore < Config::resemblance.value && !Config::doStop());
     cairo_surface_t *temp_surface = cairo_image_surface_create(CAIRO_FORMAT_ARGB32, _width, _height);
-    this->Draw(temp_surface, this->parent1);
+    this->Draw(temp_surface, this->parent1_);
     cairo_surface_write_to_png(temp_surface, Config::GetOutputFilePathAndFileName(savedBestScore).c_str());
 
     if (temp_surface)
@@ -194,28 +194,29 @@ void artGeneration::StartEvolution(cairo_surface_t *img)
         cairo_surface_destroy(temp_surface);
     }
 }
-void artGeneration::generateFirstPopulation(int children_size, int genotype_size)
+
+void ArtGeneration::GenerateFirstPopulation(int children_size, int genotype_size)
 {
-    children = (Genotype **)malloc(sizeof(Genotype) * children_size);
+    children_ = (Genotype **)malloc(sizeof(Genotype) * children_size);
     for (size_t i = 0; i < children_size; i++)
     {
-        children[i] = new Genotype(genotype_size);
+        children_[i] = new Genotype(genotype_size);
     }
 }
 
-artGeneration::artGeneration(int children_size, int genotype_size)
+ArtGeneration::ArtGeneration(int children_size, int genotype_size)
 {
     srand(time(NULL));
-    this->children_size = children_size;
-    generateFirstPopulation(children_size, genotype_size);
+    this->children_size_ = children_size;
+    GenerateFirstPopulation(children_size, genotype_size);
 }
 
-artGeneration::~artGeneration()
+ArtGeneration::~ArtGeneration()
 {
-    for (size_t i = 0; i < children_size; i++)
+    for (size_t i = 0; i < children_size_; i++)
     {
-        delete children[i];
+        delete children_[i];
     }
 
-    free(children);
+    free(children_);
 }

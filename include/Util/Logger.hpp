@@ -419,7 +419,7 @@ inline Target operator|(Target a, Target b)
     return static_cast<Target>(static_cast<short>(a) | static_cast<short>(b));
 }
 #pragma endregion Bit - wise operators
-__attribute__ ((warning("unsafe memory management")))
+// __attribute__ ((warning("unsafe memory management")))
 inline size_t cpyChar(char *dest, const char *src) 
 {
     size_t i = 0;
@@ -431,7 +431,7 @@ inline size_t cpyChar(char *dest, const char *src)
     dest[i] = src[i];
     return i;
 }
-__attribute__ ((warning("unsafe memory management")))
+// __attribute__ ((warning("unsafe memory management")))
 inline size_t cpyChar(char *dest, unsigned int src)
 {
     size_t y = 0;

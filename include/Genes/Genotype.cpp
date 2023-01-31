@@ -4,24 +4,24 @@
 Genotype::Genotype(int size_)
 {
     size = size_;
-    GeneArr = (Gene *)malloc(sizeof(Gene) * size_);
+    gene_arr = (Gene *)malloc(sizeof(Gene) * size_);
     for (size_t i = 0; i < size_; i++)
     {
-        GeneArr[i].createRandom();
+        gene_arr[i].CreateRandom();
     }
 }
 
 //randomly swap all shapes order
-void Genotype::Swap_all(float mutation_rate)
+void Genotype::SwapAll(float mutation_rate)
 {
     for (size_t i = 0; i < size; i++)
     {   
-        this->Swap_one(mutation_rate, i);
+        this->SwapOne(mutation_rate, i);
     }
 }
 
 //randomly swap one shapes order
-void Genotype::Swap_one(float mutation_rate, int i)
+void Genotype::SwapOne(float mutation_rate, int i)
 {
     if (i < 0)
     {
@@ -35,30 +35,30 @@ void Genotype::Swap_one(float mutation_rate, int i)
             swap += 1;
         }
         
-        Gene tmp = GeneArr[i];
-        GeneArr[i] = GeneArr[swap];
-        GeneArr[swap] = tmp;
+        Gene tmp = gene_arr[i];
+        gene_arr[i] = gene_arr[swap];
+        gene_arr[swap] = tmp;
     }
 }
 
-void Genotype::mutate(float mutation_rate)
+void Genotype::Mutate(float mutation_rate)
 {
     for (size_t i = 0; i < size; i++)
     {
-        GeneArr[i].mutate(mutation_rate);
+        gene_arr[i].Mutate(mutation_rate);
     }
     //TODO seems to not work on linux 6.1 nor on 6.0 ?
-    //Swap_one(mutation_rate);
+    //SwapOne(mutation_rate);
 }
-void Genotype::wiggle(float mutation_rate)
+void Genotype::Wiggle(float mutation_rate)
 {
     for (size_t i = 0; i < size; i++)
     {
-        GeneArr[i].wiggle(mutation_rate);
+        gene_arr[i].Wiggle(mutation_rate);
     }
 }
 
-void Genotype::cross(Genotype *parent1_, Genotype *parent2_)
+void Genotype::Cross(Genotype *parent1_, Genotype *parent2_)
 {
     if (parent1_->size != parent2_->size)
     {
@@ -68,11 +68,11 @@ void Genotype::cross(Genotype *parent1_, Genotype *parent2_)
     {
         if (rand() % 2)
         {
-            this->GeneArr[i] = parent1_->GeneArr[i];
+            this->gene_arr[i] = parent1_->gene_arr[i];
         }
         else
         {
-            this->GeneArr[i] = parent2_->GeneArr[i];
+            this->gene_arr[i] = parent2_->gene_arr[i];
         }
     }
 }
@@ -96,19 +96,19 @@ void Genotype::Draw(cairo_surface_t *img, float Scale)
 #pragma GCC diagnostic push
 #pragma GCC diagnostic ignored "-Wnarrowing"
 
-        float color[4] = {GeneArr[i].color.r, GeneArr[i].color.g, GeneArr[i].color.b, GeneArr[i].color.a};
+        float color[4] = {gene_arr[i].color.r, gene_arr[i].color.g, gene_arr[i].color.b, gene_arr[i].color.a};
 
 #pragma GCC diagnostic pop
 
-        int x = GeneArr[i].position.x * _width;
-        int y = GeneArr[i].position.y * _height;
+        int x = gene_arr[i].position.x * _width;
+        int y = gene_arr[i].position.y * _height;
 
-        float scaleX = GeneArr[i].scale.x * _width * Scale * 0.5;
-        float scaleY = GeneArr[i].scale.y * _height * Scale * 0.5;
-        float rotation = GeneArr[i].rotation * 3.14;
+        float scaleX = gene_arr[i].scale.x * _width * Scale * 0.5;
+        float scaleY = gene_arr[i].scale.y * _height * Scale * 0.5;
+        float rotation = gene_arr[i].rotation * 3.14;
 
         // kwadrat
-        if (GeneArr[i].typeOfShape == rectangle)
+        if (gene_arr[i].type_of_shape == rectangle)
         {
             cr = cairo_create(img);
             cairo_set_source_rgba(cr, color[0], color[1], color[2], color[3]);
@@ -132,7 +132,7 @@ void Genotype::Draw(cairo_surface_t *img, float Scale)
             cairo_close_path(cr);
             cairo_fill(cr);
         }
-        else if (GeneArr[i].typeOfShape == ellipse)
+        else if (gene_arr[i].type_of_shape == ellipse)
         {
             cr = cairo_create(img);
             cairo_set_source_rgba(cr, color[0], color[1], color[2], color[3]);
@@ -142,7 +142,7 @@ void Genotype::Draw(cairo_surface_t *img, float Scale)
             cairo_arc(cr, 0, 0, 1, 0, 2 * 3.14);
             cairo_fill(cr);
         }
-        else if (GeneArr[i].typeOfShape == triangle)
+        else if (gene_arr[i].type_of_shape == triangle)
         {
             cr = cairo_create(img);
             cairo_set_source_rgba(cr, color[0], color[1], color[2], color[3]);
@@ -169,8 +169,8 @@ void Genotype::Draw(cairo_surface_t *img, float Scale)
 Genotype::~Genotype()
 {
     Log.LogDeb("Free genotype");
-    if (GeneArr)
+    if (gene_arr)
     {
-        free(GeneArr);
+        free(gene_arr);
     }
 }

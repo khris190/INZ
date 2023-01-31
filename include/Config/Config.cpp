@@ -12,110 +12,110 @@ namespace Config
     short enabled_shape_types_amount = 1;
     // Iutput image fileName
     //    -i --iutput           <file.png>
-    Argument<std::string> Input_name("paulzcezanecrop.png", "(^\\-i$)|(^\\-\\-input$)", "(^[\\w\\s\\d\\-/.,]+\\.png$)");
+    Argument<std::string> input_name("input.png", "(^\\-i$)|(^\\-\\-input$)", "(^[\\w\\s\\d\\-/.,]+\\.png$)");
 
     // Output image fileName
     //    -o --output           <file.png>
-    Argument<std::string> Output_name("Out.png", "(^\\-o$)|(^\\-\\-output$)", "(^[\\w\\s\\d\\-/.,]+\\.png$)");
+    Argument<std::string> output_name("Out.png", "(^\\-o$)|(^\\-\\-output$)", "(^[\\w\\s\\d\\-/.,]+\\.png$)");
 
     // Anount of threads that the program will use for calculations
     //    -t --threads          <int>
-    Argument<int> Thread_count(16, "(^\\-t$)|(^\\-\\-threads?$)", intRegex);
+    Argument<int> thread_count(16, "(^\\-t$)|(^\\-\\-threads?$)", intRegex);
 
     // Size of population
     //    -p --population       <int>
-    Argument<int> Population_size(512, "(^\\-p$)|(^\\-\\-population$)", intRegex);
+    Argument<int> population_size(512, "(^\\-p$)|(^\\-\\-population$)", intRegex);
 
     // Amount of generated shapes
     //    -s --shapes-amount    <int>
-    Argument<int> Shape_amount(512, "(^\\-s$)|(^\\-\\-shapes\\-amount$)", intRegex);
+    Argument<int> shape_amount(512, "(^\\-s$)|(^\\-\\-shapes\\-amount$)", intRegex);
 
     // Types of generated types in binary
     // 100 - triangles
     // 10 - ellipses
     // 1 - squares
     //    -S --shape-types      <int>
-    Argument<shapes_switch> Shape_types(0b111, "(^\\-S$)|(^\\-\\-shape\\-types$)", binaryRegex);
+    Argument<ShapesSwitches> shape_types(0b111, "(^\\-S$)|(^\\-\\-shape\\-types$)", binaryRegex);
 
     // % Resemblance of source image at which the program will exit
     //    -r --resemblance      <float>
-    Argument<float> Resemblance(0.98f, "(^\\-r$)|(^\\-\\-resemblance$)", floatRegex);
+    Argument<float> resemblance(0.98f, "(^\\-r$)|(^\\-\\-resemblance$)", floatRegex);
 
 
     // hours after which the program will call it a day
     //    --hours      <float>
-    Argument<float> timeHours(4.f, "|(^\\-\\-hours$)", floatRegex);
+    Argument<float> time_hours(4.f, "|(^\\-\\-hours$)", floatRegex);
 
     // % scale of shapes 1 means a shape can take the whole canvas
     //    --scale               <float>
-    Argument<float> Scale(0.4f, "(^\\-\\-scale$)", floatRegex);
+    Argument<float> scale(0.4f, "(^\\-\\-scale$)", floatRegex);
 
     // % chance of mutation
     //    -m --mutation         <float>
-    Argument<float> Mutation(0.005f, "(^\\-m$)|(^\\-\\-mutation$)", floatRegex);
+    Argument<float> mutation(0.005f, "(^\\-m$)|(^\\-\\-mutation$)", floatRegex);
 
     // print info during program runtime
     //    -v --verbose
-    Argument<bool> Verbose(1, "(^\\-v$)|(^\\-\\-verbose$)");
+    Argument<bool> verbose(1, "(^\\-v$)|(^\\-\\-verbose$)");
 
     //  print info during program runtime
     //    -v --verbose
-    Argument<int> Verbose_level(1, "(^\\-v$)|(^\\-\\-verbose$)", "^(?!-)[0-8]$");
+    Argument<int> verbose_level(1, "(^\\-v$)|(^\\-\\-verbose$)", "^(?!-)[0-8]$");
 
     // print Logs to "Log.log" (best used with verbose)
     //    -L --log-to-file
-    Argument<bool> Log_to_file(0, "(^\\-L$)|(^\\-\\-log-to-file$)");
+    Argument<bool> log_to_file(0, "(^\\-L$)|(^\\-\\-log-to-file$)");
 
     // name of file Log will be saved to
     //    -L --log-to-file      <file>(optional) name of file Log will be saved to
-    Argument<std::string> Log_to_file_name("Log.log", "(^\\-L$)|(^\\-\\-log-to-file$)", "^(?!-)[\\w\\s\\d\\-.,]+");
+    Argument<std::string> log_to_file_name("Log.log", "(^\\-L$)|(^\\-\\-log-to-file$)", "^(?!-)[\\w\\s\\d\\-.,]+");
 
     // Print help
     //    -h --help
-    Argument<bool> Help(0, "(^\\-h$)|(^\\-\\-help$)", boolRegex);
+    Argument<bool> help(0, "(^\\-h$)|(^\\-\\-help$)", boolRegex);
 
     // Print values of Config variables
     //    -P --help
-    Argument<bool> Print_Vals(0, "(^\\-P$)|(^\\-\\-print\\-vals$)", boolRegex);
+    Argument<bool> print_vals(0, "(^\\-P$)|(^\\-\\-print\\-vals$)", boolRegex);
     
 
-    std::time_t startTime;
+    std::time_t start_time;
 
     bool doStop(int SecondsAfterToStop){
-        return (time(nullptr) - startTime) > (int)(3600 * Config::timeHours.value);
+        return (time(nullptr) - start_time) > (int)(3600 * Config::time_hours.value);
     }
 
 
-    std::string OutFolderName = "./";
+    std::string out_folder_name = "./";
     void CreateFolderForOutput()
     {
-        std::string dir = "./in:" + Input_name.value + "." + std::to_string(time(nullptr)) + "/" ;
+        std::string dir = "./in:" + input_name.value + "." + std::to_string(time(nullptr)) + "/" ;
         struct stat st = {0};
         if (stat(dir.c_str(), &st) == -1)
         {
             mkdir(dir.c_str(), 0700);
         }
         std::ofstream MyFile(dir + "/info.txt");
-        MyFile    << "Input_name: " << Config::Input_name.value << std::endl
-                  << "Output_name: " << Config::Output_name.value << std::endl
-                  << "Thread_count: " << Config::Thread_count.value << std::endl
-                  << "Population_size: " << Config::Population_size.value << std::endl
-                  << "Shape_amount: " << Config::Shape_amount.value << std::endl
-                  << "Shape_types: " << std::bitset<8>(Config::Shape_types.value.shapes) << std::endl
-                  << "Resemblance: " << Config::Resemblance.value << std::endl
-                  << "timeHours: " << Config::timeHours.value << std::endl
-                  << "Scale: " << Config::Scale.value << std::endl
-                  << "Mutation rate: " << Config::Mutation.value << std::endl
-                  << "Verbose: " << Config::Verbose.value << std::endl
-                  << "Verbose_level: " << Config::Verbose_level.value << std::endl
-                  << "Log_to_file: " << Config::Log_to_file.value << std::endl
-                  << "Log_to_file_name: " << Config::Log_to_file_name.value << std::endl;
+        MyFile    << "input_name: " << Config::input_name.value << std::endl
+                  << "output_name: " << Config::output_name.value << std::endl
+                  << "thread_count: " << Config::thread_count.value << std::endl
+                  << "population_size: " << Config::population_size.value << std::endl
+                  << "shape_amount: " << Config::shape_amount.value << std::endl
+                  << "shape_types: " << std::bitset<8>(Config::shape_types.value.shapes) << std::endl
+                  << "resemblance: " << Config::resemblance.value << std::endl
+                  << "time_hours: " << Config::time_hours.value << std::endl
+                  << "scale: " << Config::scale.value << std::endl
+                  << "mutation rate: " << Config::mutation.value << std::endl
+                  << "verbose: " << Config::verbose.value << std::endl
+                  << "verbose_level: " << Config::verbose_level.value << std::endl
+                  << "log_to_file: " << Config::log_to_file.value << std::endl
+                  << "log_to_file_name: " << Config::log_to_file_name.value << std::endl;
         MyFile.close();
-        OutFolderName = dir;
+        out_folder_name = dir;
     }
     std::string GetOutputFilePathAndFileName(float Resemblance)
     {
-        return OutFolderName + "/" + std::to_string(Resemblance) + Input_name.value;
+        return out_folder_name + "/" + std::to_string(Resemblance) + input_name.value;
     }
 
 

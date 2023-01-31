@@ -1,7 +1,8 @@
 
 #include "fitness.hpp"
 
-float calculateFitness(unsigned char *img_data, unsigned char *surface_data, int _width, int _height);
+extern float calculateFitness(unsigned char *img_data, unsigned char *surface_data, int _width, int _height);
+
 float fitness_v1_RGBA(unsigned char *pA, unsigned char *pB)
 {   
     auto absR = (float)std::abs(pA[0] - pB[0]);

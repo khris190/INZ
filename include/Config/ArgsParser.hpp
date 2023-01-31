@@ -7,5 +7,21 @@
 #include <typeinfo>
 #include <regex>
 
-bool ParseMainArguments(int argc, char const *argv[]);
+class ArgsParser
+{
+private:
+    template <typename T>
+    bool MatchAndSetArg(Argument<T> &arg, char const *argv[], int i);
+    bool MatchAndSetArg(Argument<std::string> &arg, char const *argv[], int i);
+    bool MatchAndSetArg(Argument<ShapesSwitches> &arg, char const *argv[], int i);
+    bool ParseMainArguments(int argc, char const *argv[]);
+public:
+    bool is_parsed = false;
+    ArgsParser(int argc, char const *argv[]);
+    ~ArgsParser() {}
+};
+
+
+
+
 #endif // ARGSPARSER_HPP

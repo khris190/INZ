@@ -1,4 +1,3 @@
-#pragma once
 
 /**
  * @file BS_thread_pool_light.hpp
@@ -9,6 +8,9 @@
  *
  * @brief BS::thread_pool_light: a fast, lightweight, and easy-to-use C++17 thread pool library. This header file contains a light version of the main library, for use when advanced features are not needed.
  */
+
+#ifndef BS_THREAD_POOL_LIGHT_HPP
+#define BS_THREAD_POOL_LIGHT_HPP
 
 #define BS_THREAD_POOL_VERSION "v3.3.0 (2022-08-03) [light]"
 
@@ -323,3 +325,5 @@ private:
 };
 
 } // namespace BS
+
+#endif // BS_THREAD_POOL_LIGHT_HPP

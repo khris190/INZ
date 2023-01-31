@@ -1,9 +1,9 @@
 #include "ArgsParser.hpp"
 
 template <typename T>
-bool MatchAndSetArg(Argument<T> &arg, char const *argv[], int i)
+bool ArgsParser::MatchAndSetArg(Argument<T> &arg, char const *argv[], int i)
 {
-    if (std::regex_match(argv[i], std::regex(arg.Regex_tag)))
+    if (std::regex_match(argv[i], std::regex(arg.regex_tag)))
     {
         if (typeid(arg.value) == typeid(bool))
         {
@@ -12,9 +12,9 @@ bool MatchAndSetArg(Argument<T> &arg, char const *argv[], int i)
         }
         else
         {
-            if (!arg.Value_regex_tag.empty())
+            if (!arg.value_regex_tag.empty())
             {
-                if (std::regex_match(argv[i + 1], std::regex(arg.Value_regex_tag)))
+                if (std::regex_match(argv[i + 1], std::regex(arg.value_regex_tag)))
                 {
                     if (typeid(arg.value) == typeid(int))
                     {
@@ -33,13 +33,13 @@ bool MatchAndSetArg(Argument<T> &arg, char const *argv[], int i)
     }
     return false;
 }
-bool MatchAndSetArg(Argument<std::string> &arg, char const *argv[], int i)
+bool ArgsParser::MatchAndSetArg(Argument<std::string> &arg, char const *argv[], int i)
 {
-    if (std::regex_match(argv[i], std::regex(arg.Regex_tag)))
+    if (std::regex_match(argv[i], std::regex(arg.regex_tag)))
     {
         if (typeid(arg.value) == typeid(std::string))
         {
-            if (std::regex_match(argv[i + 1], std::regex(arg.Value_regex_tag)))
+            if (std::regex_match(argv[i + 1], std::regex(arg.value_regex_tag)))
             {
                 arg.value = argv[i + 1];
             }
@@ -51,15 +51,15 @@ bool MatchAndSetArg(Argument<std::string> &arg, char const *argv[], int i)
     return false;
 }
 
-bool MatchAndSetArg(Argument<shapes_switch> &arg, char const *argv[], int i)
+bool ArgsParser::MatchAndSetArg(Argument<ShapesSwitches> &arg, char const *argv[], int i)
 {
-    if (std::regex_match(argv[i], std::regex(arg.Regex_tag)))
+    if (std::regex_match(argv[i], std::regex(arg.regex_tag)))
     {
-        if (typeid(arg.value) == typeid(shapes_switch))
+        if (typeid(arg.value) == typeid(ShapesSwitches))
         {
-            if (!arg.Value_regex_tag.empty())
+            if (!arg.value_regex_tag.empty())
             {
-                if (std::regex_match(argv[i + 1], std::regex(arg.Value_regex_tag)))
+                if (std::regex_match(argv[i + 1], std::regex(arg.value_regex_tag)))
                 {
                     Config::enabled_shape_types_amount = 0;
                     arg.value = 0;
@@ -89,24 +89,24 @@ bool MatchAndSetArg(Argument<shapes_switch> &arg, char const *argv[], int i)
 void PrintInfos()
 {
     // print stored values
-    if (Config::Print_Vals.value)
+    if (Config::print_vals.value)
     {
-        std::cout << "Input_name: " << Config::Input_name.value << std::endl
-                  << "Output_name: " << Config::Output_name.value << std::endl
-                  << "Thread_count: " << Config::Thread_count.value << std::endl
-                  << "Population_size: " << Config::Population_size.value << std::endl
-                  << "Shape_amount: " << Config::Shape_amount.value << std::endl
-                  << "Shape_types: " << std::bitset<8>(Config::Shape_types.value.shapes) << std::endl
-                  << "Resemblance: " << Config::Resemblance.value << std::endl
-                  << "timeHours: " << Config::timeHours.value << std::endl
-                  << "Scale: " << Config::Scale.value << std::endl
-                  << "Mutation rate: " << Config::Mutation.value << std::endl
-                  << "Verbose: " << Config::Verbose.value << std::endl
-                  << "Verbose_level: " << Config::Verbose_level.value << std::endl
-                  << "Log_to_file: " << Config::Log_to_file.value << std::endl
-                  << "Log_to_file_name: " << Config::Log_to_file_name.value << std::endl;
+        std::cout << "input_name: " << Config::input_name.value << std::endl
+                  << "output_name: " << Config::output_name.value << std::endl
+                  << "thread_count: " << Config::thread_count.value << std::endl
+                  << "population_size: " << Config::population_size.value << std::endl
+                  << "shape_amount: " << Config::shape_amount.value << std::endl
+                  << "shape_types: " << std::bitset<8>(Config::shape_types.value.shapes) << std::endl
+                  << "resemblance: " << Config::resemblance.value << std::endl
+                  << "time_hours: " << Config::time_hours.value << std::endl
+                  << "scale: " << Config::scale.value << std::endl
+                  << "mutation rate: " << Config::mutation.value << std::endl
+                  << "verbose: " << Config::verbose.value << std::endl
+                  << "verbose_level: " << Config::verbose_level.value << std::endl
+                  << "log_to_file: " << Config::log_to_file.value << std::endl
+                  << "log_to_file_name: " << Config::log_to_file_name.value << std::endl;
     }
-    if (Config::Help.value)
+    if (Config::help.value)
     {
         std::cout << " -h --help            Print help" << std::endl
                   << " -P --print-vals      Print configurated values" << std::endl
@@ -116,7 +116,7 @@ void PrintInfos()
                   << " -p --population      <int> Size of population  " << std::endl
                   << " -s --shapes-amount   <int> Amount of generated shapes  " << std::endl
                   << " -S --shape-types     <int> Types of generated types in binary  10 - ellipses 1 - squares   " << std::endl
-                  << " -r --resemblance     <float> % Resemblance of source image at which the program will exit" << std::endl
+                  << " -r --resemblance     <float> % resemblance of source image at which the program will exit" << std::endl
                   << " --hours              <float> hours after which the program will call it a day" << std::endl
                   << " --scale              <float> % scale of shapes 1 means a shape can take the whole canvas" << std::endl
                   << " -m --mutation        <float> % chance of mutation" << std::endl
@@ -125,45 +125,50 @@ void PrintInfos()
     }
 }
 
-bool ParseMainArguments(int argc, char const *argv[])
+bool ArgsParser::ParseMainArguments(int argc, char const *argv[])
 {
     int i;
     for (i = 1; i < argc - 1; i++)
     {
-        MatchAndSetArg(Config::Input_name, argv, i);
-        MatchAndSetArg(Config::Output_name, argv, i);
+        MatchAndSetArg(Config::input_name, argv, i);
+        MatchAndSetArg(Config::output_name, argv, i);
 
-        MatchAndSetArg(Config::Thread_count, argv, i);
-        MatchAndSetArg(Config::Population_size, argv, i);
-        MatchAndSetArg(Config::Shape_amount, argv, i);
-        MatchAndSetArg(Config::Shape_types, argv, i);
-        MatchAndSetArg(Config::Resemblance, argv, i);
-        MatchAndSetArg(Config::timeHours, argv, i);
-        MatchAndSetArg(Config::Scale, argv, i);
-        MatchAndSetArg(Config::Mutation, argv, i);
+        MatchAndSetArg(Config::thread_count, argv, i);
+        MatchAndSetArg(Config::population_size, argv, i);
+        MatchAndSetArg(Config::shape_amount, argv, i);
+        MatchAndSetArg(Config::shape_types, argv, i);
+        MatchAndSetArg(Config::resemblance, argv, i);
+        MatchAndSetArg(Config::time_hours, argv, i);
+        MatchAndSetArg(Config::scale, argv, i);
+        MatchAndSetArg(Config::mutation, argv, i);
 
-        if (MatchAndSetArg(Config::Verbose, argv, i))
-            MatchAndSetArg(Config::Verbose_level, argv, i);
+        if (MatchAndSetArg(Config::verbose, argv, i))
+            MatchAndSetArg(Config::verbose_level, argv, i);
 
-        if (MatchAndSetArg(Config::Log_to_file, argv, i))
-            MatchAndSetArg(Config::Log_to_file_name, argv, i);
-        MatchAndSetArg(Config::Help, argv, i);
-        MatchAndSetArg(Config::Print_Vals, argv, i);
+        if (MatchAndSetArg(Config::log_to_file, argv, i))
+            MatchAndSetArg(Config::log_to_file_name, argv, i);
+        MatchAndSetArg(Config::help, argv, i);
+        MatchAndSetArg(Config::print_vals, argv, i);
     }
     if (argc > 1)
     {
-        MatchAndSetArg(Config::Help, argv, i);
-        MatchAndSetArg(Config::Print_Vals, argv, i);
+        MatchAndSetArg(Config::help, argv, i);
+        MatchAndSetArg(Config::print_vals, argv, i);
     }
 
     // set population to multiple of thread count (idk if needed i just thought that it might be and it makes program a tiny bit faster)
-    Config::Population_size.value -= (Config::Population_size.value % Config::Thread_count.value);
-    if (Config::Help.value || Config::Print_Vals.value)
+    Config::population_size.value -= (Config::population_size.value % Config::thread_count.value);
+    if (Config::help.value || Config::print_vals.value)
     {
         PrintInfos();
         return false;
     }
     Config::CreateFolderForOutput();
-    Config::startTime = std::time(nullptr);
+    Config::start_time = std::time(nullptr);
     return true;
 };
+
+ArgsParser::ArgsParser(int argc, char const *argv[])
+{
+    this->is_parsed = this->ParseMainArguments(argc, argv);
+}
